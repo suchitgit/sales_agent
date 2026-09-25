@@ -104,3 +104,26 @@ The R4 check, unchanged since `kit-v1`: *"Does it name a pain I have actually be
 Not changed: R4, and what the reader is shown. Both are decisions on the procedure. Neither reader clears the
 guard, so the reader stays on the kit default (Haiku 4.5), the cheaper one; the full Sunidhi runs were not repeated
 since the guard already fails.
+
+## LangSmith experiments (observability add-on) — `eval_langsmith.py`, k=3, writer `claude-sonnet-5`
+
+Dataset `sales-agent-seed-prospects`; experiments `reader-haiku-37feeb55` and `reader-sonnet-fdbe5004`, side by
+side in LangSmith → Datasets → compare. Procedure as in commit b7cdc44 (R1/R3 reworded, R4 unchanged).
+
+| | Haiku 4.5 reader | Sonnet 5 reader |
+|---|---|---|
+| `known_winner_clears` (guard, k/k) | **0** — 0/3, R4 | **0** — 0/3, R4 |
+| `consistency` | 0 — paths differ for sunidhi, arun | 0 — paths differ for sunidhi, arun |
+| Sunidhi: winners / deaths (9 candidates) | 0 · R4 ×6, R2 ×1, R1 ×1, R3 ×1 | 0 · R4 ×7, R2 ×1, R3 ×1 |
+| Arun: winners / deaths | 0 · **R1 ×8**, R2 ×1 | 0 · R2 ×4, R3 ×5 |
+| Nikhil (null): declined | 3/3 | 3/3 |
+
+- The guard agrees with `make guard`: with both readers the known winning line dies at R4. Sonnet's reason:
+  *"the seller's inferred pain framing … she never said this. The known facts only mention expansion into 3 states
+  and 120 open roles"* — the same missing-evidence reason as before.
+- Arun under Haiku still dies at R1 (8 of 9) after the rewording; under Sonnet, at R2/R3. The R1 rewording fixed
+  Haiku's R1 reading on Sunidhi's known line but not on Arun's generated lines — a reader difference the Sunidhi
+  guard alone does not show.
+- `consistency` fails with both readers: on the API, different candidates die at different checks, so the step
+  names differ run to run. The README anticipates this ("on the API this can be legitimate"); it is variance, recorded.
+- Null safety holds everywhere: Nikhil declined in all 6 runs.
