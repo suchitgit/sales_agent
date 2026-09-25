@@ -54,20 +54,28 @@ class StubModel:
 NO_SAMPLING = ("claude-sonnet-5", "claude-opus-5", "claude-opus-4-7", "claude-opus-4-8", "claude-fable", "claude-mythos")
 
 
-def get_model(size: str = "medium"):
-    if config.USE_STUB:
-        return StubModel()
+def anthropic_model(name: str):
+    """The one place a real model is constructed — the writer, the reader and the DeepEval judge all come here."""
     from langchain_anthropic import ChatAnthropic
-    name = config.MODEL_SMALL if size == "small" else config.MODEL_MEDIUM
     sampling = {} if name.startswith(NO_SAMPLING) else {"temperature": 0}
     return ChatAnthropic(model=name, api_key=config.ANTHROPIC_API_KEY, max_tokens=4000, **sampling)
 
 
+def get_model(size: str = "medium"):
+    if config.USE_STUB:
+        return StubModel()
+    return anthropic_model(config.MODEL_SMALL if size == "small" else config.MODEL_MEDIUM)
+
+
+def text_of(content) -> str:
+    """A model that thinks returns a list of content blocks (thinking + text); only the text blocks are the answer."""
+    if isinstance(content, list):
+        return "".join(b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text")
+    return content
+
+
 def parse_json(text) -> dict:
-    """Models sometimes wrap JSON in fences. Be forgiving, fail loudly. A model that thinks returns a list
-    of content blocks (thinking + text); only the text blocks are the answer."""
-    if isinstance(text, list):
-        text = "".join(b.get("text", "") for b in text if isinstance(b, dict) and b.get("type") == "text")
-    text = text.strip()
+    """Models sometimes wrap JSON in fences. Be forgiving, fail loudly."""
+    text = text_of(text).strip()
     text = re.sub(r"^```(?:json)?|```$", "", text, flags=re.M).strip()
     return json.loads(text)
