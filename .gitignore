@@ -2,7 +2,7 @@
 .env
 __pycache__/
 *.pyc
-data/kuzu/
+data/kuzu*
 data/index/*
 !data/index/.gitkeep
 data/synthetic/*
