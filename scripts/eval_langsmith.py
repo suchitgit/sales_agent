@@ -1,8 +1,9 @@
 """LangSmith experiment: a dataset of the seed prospects, the spine as the target, our checks as
-evaluators, each prospect run k times. Two experiment-level columns:
-  known_winner_clears — the guard: the known winning line, scored by the active reader, must clear all
-                        six checks k times out of k (the same test as `make guard`)
-  consistency         — one step path per prospect across its k runs
+evaluators, each prospect run k times. Two experiment-level columns, from one guard pass:
+  known_winner_clears — the guard: every known-good line (data/seed/known_winners.json, written by a person),
+                        scored by the active reader, must clear all six checks k times out of k (= `make guard`)
+  verdict_consistency — on the API: the same known line, the same reader, the same verdict k of k
+  path_consistency    — on the stub instead: one step path per prospect across its k runs
 Usage: python scripts/eval_langsmith.py [experiment-prefix] [--k 3]"""
 import sys, uuid
 sys.path.insert(0, "src")
@@ -10,7 +11,7 @@ from salesagent.evals import tracing
 assert tracing.enable(), "LANGSMITH_API_KEY missing in .env"
 from langsmith import Client
 from salesagent import config
-from salesagent.evals.suite import run_once, score_line, KNOWN_WINNER
+from salesagent.evals.suite import run_once, guard, KNOWN_WINNER
 from salesagent.stores.context import load_prospects
 from salesagent.evals.checks import CHECKS
 
@@ -36,22 +37,38 @@ def make_evaluator(name, fn):
     return ev
 
 
+_guards = {}
+
+
+def _guard_all() -> dict:
+    """One guard pass per experiment, shared by both columns — the known lines are not scored twice."""
+    if not _guards:
+        _guards.update({pid: guard(pid, k) for pid in KNOWN_WINNER})
+    return _guards
+
+
 def known_winner_clears(inputs, outputs):
-    """The guard, once per experiment: if the reader rejects the known-correct line, the checks are wrong."""
-    runs = [score_line("sunidhi", KNOWN_WINNER["sunidhi"]) for _ in range(k)]
-    deaths = [f"{r['died_at']}: {r['reason']}" for r in runs if r["died_at"]]
-    return {"key": "known_winner_clears", "score": 1.0 if not deaths else 0.0,
-            "comment": f"{k - len(deaths)}/{k} cleared all six with {READER}" + (" · " + " | ".join(deaths) if deaths else "")}
+    """The guard: if the reader rejects a known-correct line, the checks are wrong, not the line."""
+    g = _guard_all()
+    notes = [f"{pid} {sum(v == 'clears' for v in r['verdicts'])}/{k}" + "".join(f" · {x['died_at']}: {x['reason']}" for x in r["runs"] if x["died_at"])
+             for pid, r in g.items()]
+    return {"key": "known_winner_clears", "score": 1.0 if all(r["clears"] for r in g.values()) else 0.0,
+            "comment": f"reader {READER} · " + " | ".join(notes)}
 
 
 def consistency(inputs, outputs):
-    """pass^k's second half: the same prospect must take the same step path on every run."""
-    paths = {}
-    for i, o in zip(inputs, outputs):
-        paths.setdefault(i["prospect_id"], set()).add("|".join(o.get("steps", [])))
-    split = [pid for pid, ps in paths.items() if len(ps) > 1]
-    return {"key": "consistency", "score": 0.0 if split else 1.0,
-            "comment": ("paths differ for " + ", ".join(split)) if split else f"one path per prospect over {k} runs"}
+    """Stub: one step path per prospect over k runs. API: different candidates legitimately take different paths,
+    so consistency is the verdict on each known line — same line, same reader, same verdict, k of k."""
+    if config.USE_STUB:
+        paths = {}
+        for i, o in zip(inputs, outputs):
+            paths.setdefault(i["prospect_id"], set()).add("|".join(o.get("steps", [])))
+        split = [pid for pid, ps in paths.items() if len(ps) > 1]
+        return {"key": "path_consistency", "score": 0.0 if split else 1.0,
+                "comment": ("paths differ for " + ", ".join(split)) if split else f"one path per prospect over {k} runs"}
+    g = _guard_all()
+    return {"key": "verdict_consistency", "score": 1.0 if all(r["consistent"] for r in g.values()) else 0.0,
+            "comment": " | ".join(f"{pid}: {', '.join(r['verdicts'])}" for pid, r in g.items())}
 
 
 if __name__ == "__main__":

@@ -1,17 +1,24 @@
-"""pass^k over the seed prospects, plus tool-path consistency. Exports sales.eval.v1."""
+"""pass^k over the seed prospects, plus consistency. Exports sales.eval.v1.
+Consistency means two different things: on the stub, the step path must not change between runs; on the API,
+different candidates legitimately take different paths, so it is the verdict on a known line that must not change."""
 from __future__ import annotations
 import json, time
 from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.store.memory import InMemoryStore
 from langgraph.types import Command
+from .. import config
 from ..graph.spine import build
 from ..graph import nodes
 from ..stores.context import load_prospects
 from .checks import CHECKS
 
-# The experiment's T7 result. A known-good case the reader must not flip: if this line fails a check,
-# the check is wrong, not the line.
-KNOWN_WINNER = {"sunidhi": "3 new states, one payroll run, before your first joiner's salary date"}
+def load_known_winners() -> dict[str, str]:
+    """Known-good lines from data/seed/known_winners.json, written by a person, never by the model under test.
+    A known-good case the reader must not flip: if one fails a check, the check is wrong, not the line."""
+    return {pid: v["line"] for pid, v in json.load(open(config.SEED / "known_winners.json")).items()}
+
+
+KNOWN_WINNER = load_known_winners()
 
 
 def score_line(prospect_id: str, text: str) -> dict:
@@ -21,6 +28,14 @@ def score_line(prospect_id: str, text: str) -> dict:
     st.update(nodes.assemble(st))
     st["candidates"] = [{"id": "K", "text": text, "results": [], "died_at": None, "reason": None}]
     return nodes.score(st)["candidates"][0]
+
+
+def guard(prospect_id: str, k: int = 3) -> dict:
+    """The known line, scored k times by the active reader. clears: k of k cleared all six checks.
+    consistent: the same verdict every time — same line, same reader, same verdict (the API's consistency)."""
+    runs = [score_line(prospect_id, KNOWN_WINNER[prospect_id]) for _ in range(k)]
+    verdicts = [r["died_at"] or "clears" for r in runs]
+    return {"runs": runs, "verdicts": verdicts, "clears": all(v == "clears" for v in verdicts), "consistent": len(set(verdicts)) == 1}
 
 
 def run_once(prospect_id: str, thread: str, auto_approve: bool = True) -> dict:
@@ -44,8 +59,14 @@ def run_suite(k: int = 3) -> dict:
             if all(res.values()): passes += 1
             for c, ok in res.items():
                 if not ok: agg[c] = False
-        agg["consistency"] = len(paths) == 1
-        scen.append({"id": pid, "title": f"{p['name']} · {p['role']}, {p['company']}", "passes": passes if agg["consistency"] else 0, "runs": k, "checks": agg})
+        if config.USE_STUB:
+            kind, agg["consistency"] = "path", len(paths) == 1           # deterministic: the path must not change
+        elif pid in KNOWN_WINNER:
+            kind, agg["consistency"] = "verdict", guard(pid, k)["consistent"]  # same line, same reader, same verdict
+        else:
+            kind, agg["consistency"] = None, None                        # API, no human-written known line: not measured
+        scen.append({"id": pid, "title": f"{p['name']} · {p['role']}, {p['company']}", "passes": passes if agg["consistency"] is not False else 0,
+                     "runs": k, "checks": agg, "consistency_kind": kind})
     return {"kind": "sales.eval.v1", "k": k, "createdAt": int(time.time() * 1000), "source": "local app", "scenarios": scen}
 
 

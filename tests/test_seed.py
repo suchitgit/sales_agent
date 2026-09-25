@@ -15,3 +15,7 @@ def test_her_experience_is_marked_in_data_and_never_flagged():
     marked = {n["id"] for n in notes if n.get("her_experience")}
     assert {"n2", "n3"} <= marked and not marked & {"n1", "n6", "n11"}
     assert not any(sanitize(n["text"])[1] for n in notes if n.get("her_experience"))
+def test_known_winners_are_written_by_a_person():
+    known = json.load(open(config.SEED / "known_winners.json"))
+    prospects = {p["id"] for p in json.load(open(config.SEED / "prospects.json"))}
+    assert known and all(v["written_by"] == "human" and v["line"] and pid in prospects for pid, v in known.items())
