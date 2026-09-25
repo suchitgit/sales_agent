@@ -8,7 +8,7 @@ from .. import config
 from ..models import get_model, parse_json
 from ..stores.context import get_context
 from ..stores.retrieval import Retrieval
-from ..stores.memory import past_decisions, rep_profile
+from ..stores.memory import load_cases, past_decisions, rep_profile
 from ..stores.graph import KnowledgeGraph
 from ..guards.approval import request_approval
 from ..guards.idempotency import send_key, send_once
@@ -36,14 +36,15 @@ def fetch(state, *, store: BaseStore = None):
     query = " ".join([p["pain"] for p in pains] + ["payroll", "reconciliation", "onboarding"])
     retrieved = _ret.search(query, state["prospect_id"]) if on["retrieval"] else []
     flagged = [r for r in retrieved if r["flagged"]]
-    mem = {"cases": past_decisions([p["pain"] for p in pains]), "rep": rep_profile(store, state.get("rep_id", "rep-suchit"))}
+    all_cases, cases_from = load_cases()
+    mem = {"cases": past_decisions([p["pain"] for p in pains], all_cases), "rep": rep_profile(store, state.get("rep_id", "rep-suchit"))}
     kg = {"pains": pains if on["kg"] else [], "archetype": _kg.top_archetype(ctx["prospect"]["role"], ctx["prospect"]["industry"]) if on["kg"] else {"label": "none", "id": "none"},
           "rules": _kg.rules if on["kg"] else [], "reader": _kg.reader_trace()}
     if not on["memory"]:
         mem = {"cases": [], "rep": {"habits": []}}
     tr = [T("fetch · context", f"trigger={'none' if not ctx['has_live_trigger'] else ctx['trigger']} · roles={ctx['open_roles']}"),
           T("fetch · retrieval", f"{len(retrieved) - len(flagged)} dormant facts" + (f" · {len(flagged)} note(s) flagged as instruction-like: {', '.join(f['id'] for f in flagged)} — kept as data, excluded from the prompt" if flagged else "")),
-          T("fetch · memory", f"{len(mem['cases'])} past decisions with outcomes · rep habits loaded"),
+          T("fetch · memory", f"{len(mem['cases'])} past decisions with outcomes, from {cases_from} · rep habits loaded"),
           T("fetch · knowledge graph", f"{len(pains)} trigger→pain mappings · archetype: {kg['archetype']['label']}")]
     return {"context": ctx, "retrieved": retrieved, "memory": mem, "kg": kg, "trace": tr}
 
