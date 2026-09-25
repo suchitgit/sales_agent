@@ -50,3 +50,23 @@ def test_injection_visible_in_trace():
 def test_same_path_every_run():
     res = run_suite(k=3)
     assert all(s["checks"]["consistency"] for s in res["scenarios"])
+
+def test_reader_knows_her_history_but_not_the_rest():
+    from salesagent.graph.nodes import known_to_her
+    out = run_once("sunidhi", "t-known")
+    known = known_to_her(out)
+    assert "separate payroll processes" in known and "manual reconciliation" in known      # n2, n3
+    assert "webinar" not in known and "Transform HR" not in known and "IGNORE" not in known  # not n1, n6, n11
+    assert "n2, n3" in next(s["detail"] for s in out["trace"] if s["step"] == "fetch · retrieval")
+
+def test_reader_knows_her_history_even_with_retrieval_off():
+    from langgraph.checkpoint.memory import InMemorySaver
+    from salesagent.graph.spine import build
+    from salesagent.graph.nodes import known_to_her
+    from salesagent import config
+    config.SEND_APPROVAL_REQUIRED = False
+    on = {"context": True, "retrieval": False, "memory": True, "kg": True}
+    out = build(checkpointer=InMemorySaver()).invoke({"prospect_id": "sunidhi", "rep_id": "r", "thread_id": "t-ret-off", "stores_on": on},
+                                                     {"configurable": {"thread_id": "t-ret-off"}})
+    config.SEND_APPROVAL_REQUIRED = True
+    assert "manual reconciliation" in known_to_her(out)

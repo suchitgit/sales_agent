@@ -12,7 +12,7 @@ class SalesState(TypedDict, total=False):
     prospect_id: str; rep_id: str; thread_id: str
     stores_on: dict
     plan: list[str]
-    context: dict; retrieved: list[dict]; memory: dict; kg: dict
+    context: dict; retrieved: list[dict]; her_history: list[dict]; memory: dict; kg: dict
     prompt: str
     candidates: list[Candidate]
     winner: Candidate | None

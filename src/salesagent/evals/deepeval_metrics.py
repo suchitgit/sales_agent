@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from deepeval.metrics import BaseMetric, GEval
 from deepeval.test_case import LLMTestCase, SingleTurnParams
+from ..graph.nodes import known_to_her
 
 
 def _run(tc: LLMTestCase) -> dict:
@@ -112,8 +113,7 @@ DETERMINISTIC = [R3NoveltyMetric, CompetitorProxyMetric, NullSafetyMetric, Trace
 
 
 def case_from_run(prospect: dict, run: dict) -> LLMTestCase:
-    ctx = run.get("context", {})
-    known = " ".join(filter(None, [ctx.get("trigger"), *ctx.get("facts", [])])) or "nothing is happening"
+    known = known_to_her(run) if run.get("context") else "nothing is happening"  # the same knowledge the reader gets
     return LLMTestCase(
         input=f"What she already knows: {known}",
         actual_output=run["winner"]["text"] if run.get("winner") else "(declined — no line written)",

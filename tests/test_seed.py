@@ -9,3 +9,9 @@ def test_choice_sets_recorded():
     for c in json.load(open(config.SEED / "decision_cases.json")): assert c["chosen"] in c["choice_set"]
 def test_null_prospect_exists():
     assert any(p["expect"] == "decline" for p in json.load(open(config.SEED / "prospects.json")))
+def test_her_experience_is_marked_in_data_and_never_flagged():
+    from salesagent.guards.sanitize import sanitize
+    notes = json.load(open(config.SEED / "crm_notes.json"))
+    marked = {n["id"] for n in notes if n.get("her_experience")}
+    assert {"n2", "n3"} <= marked and not marked & {"n1", "n6", "n11"}
+    assert not any(sanitize(n["text"])[1] for n in notes if n.get("her_experience"))

@@ -36,6 +36,7 @@ def fetch(state, *, store: BaseStore = None):
     query = " ".join([p["pain"] for p in pains] + ["payroll", "reconciliation", "onboarding"])
     retrieved = _ret.search(query, state["prospect_id"]) if on["retrieval"] else []
     flagged = [r for r in retrieved if r["flagged"]]
+    history = _ret.her_experiences(state["prospect_id"])  # for the reader: she knows her past whatever the writer is given
     all_cases, cases_from = load_cases()
     mem = {"cases": past_decisions([p["pain"] for p in pains], all_cases), "rep": rep_profile(store, state.get("rep_id", "rep-suchit"))}
     kg = {"pains": pains if on["kg"] else [], "archetype": _kg.top_archetype(ctx["prospect"]["role"], ctx["prospect"]["industry"]) if on["kg"] else {"label": "none", "id": "none"},
@@ -43,10 +44,20 @@ def fetch(state, *, store: BaseStore = None):
     if not on["memory"]:
         mem = {"cases": [], "rep": {"habits": []}}
     tr = [T("fetch · context", f"trigger={'none' if not ctx['has_live_trigger'] else ctx['trigger']} · roles={ctx['open_roles']}"),
-          T("fetch · retrieval", f"{len(retrieved) - len(flagged)} dormant facts" + (f" · {len(flagged)} note(s) flagged as instruction-like: {', '.join(f['id'] for f in flagged)} — kept as data, excluded from the prompt" if flagged else "")),
+          T("fetch · retrieval", f"{len(retrieved) - len(flagged)} dormant facts" + (f" · {len(flagged)} note(s) flagged as instruction-like: {', '.join(f['id'] for f in flagged)} — kept as data, excluded from the prompt" if flagged else "")
+                                  + (f" · her own experience, for the reader: {', '.join(h['id'] for h in history)}" if history else "")),
           T("fetch · memory", f"{len(mem['cases'])} past decisions with outcomes, from {cases_from} · rep habits loaded"),
           T("fetch · knowledge graph", f"{len(pains)} trigger→pain mappings, from {_kg.source} · archetype: {kg['archetype']['label']}")]
-    return {"context": ctx, "retrieved": retrieved, "memory": mem, "kg": kg, "trace": tr}
+    return {"context": ctx, "retrieved": retrieved, "her_history": history, "memory": mem, "kg": kg, "trace": tr}
+
+
+def known_to_her(state) -> str:
+    """What the reader, playing her, already knows: this week's trigger and facts, and what she has been through
+    (CRM notes marked her_experience). R4 asks about a pain she has lived; without her history it cannot be judged."""
+    ctx = state["context"]
+    now = " ".join(filter(None, [ctx.get("trigger"), *ctx.get("facts", [])])) or "nothing is happening"
+    lived = " | ".join(h["text"] for h in state.get("her_history", []))
+    return now + (f" || What she has been through: {lived}" if lived else "")
 
 
 def _cut(text: str, budget: int) -> str:
@@ -105,8 +116,7 @@ def score(state):
                 "trace": [T("score", "no reader trace available (knowledge graph off) — best-informed candidate taken as written, unscored", label="HYPOTHESIS"),
                           T("select", f"unscored: \u201c{w['text']}\u201d" if w else "nothing to select", label="HYPOTHESIS")]}
     llm = get_model("small")
-    ctx = state["context"]
-    known = f"{ctx['trigger']} {' '.join(ctx['facts'])}"
+    known = known_to_her(state)
     reader = state["kg"]["reader"]
     cands, tr, winner = [], [], None
     for c in state["candidates"]:

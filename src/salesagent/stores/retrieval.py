@@ -36,6 +36,17 @@ class Retrieval:
                     out.append({"id": n["id"], "text": clean, "score": 0.0, "flagged": True})
         return out
 
+    def her_experiences(self, prospect_id: str) -> list[dict]:
+        """Notes marked "her_experience": true in crm_notes.json — things she lived through, which the reader
+        (playing her) must know. Selected by the data, not by id; flagged text never passes, marked or not."""
+        out = []
+        for n in self.notes:
+            if n["prospect"] == prospect_id and n.get("her_experience"):
+                clean, flagged = sanitize(n["text"])
+                if not flagged:
+                    out.append({"id": n["id"], "text": clean})
+        return out
+
     def capabilities_for(self, pains: list[str]) -> list[str]:
         hits = []
         for cap in self.catalogue["provides"]:
