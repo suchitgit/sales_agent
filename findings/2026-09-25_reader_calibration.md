@@ -69,3 +69,38 @@ Line: **"3 new states, one payroll run, before your first joiner's salary date"*
   located it. This is the argument for pass^k.
 - Second-order, not yet addressed: Sonnet's deadlines are generic ("30 days", "compliance clock") rather than
   built from her own numbers the way "first joiner's salary date" is.
+
+## After the wording change (commit b7cdc44) — the guard, `make guard`, pass^3 per reader
+
+R1 and R3 reworded in `traces.json` (see that commit); R2, R4, R5, R6 unchanged. The guard scores the known
+winning line three times with the active reader and requires all six checks cleared every time.
+
+| Reader | Guard | R1 | R2 | R3 | Died at |
+|---|---|---|---|---|---|
+| Haiku 4.5 | **0/3** | pass ×3 | pass ×3 | pass ×3 | **R4 ×3** |
+| Sonnet 5 | **0/3** | pass ×3 | pass ×3 | pass ×3 | **R4 ×3** |
+
+The R4 check, unchanged since `kit-v1`: *"Does it name a pain I have actually been through?"* — kill:
+*"In the words I would use, not the seller's."* Reasons, as returned:
+
+- Haiku: *"uses seller's jargon ('joiner's salary date') rather than the prospect's natural language … there's no
+  evidence she's actually experienced the specific pain … this is assumed pain, not validated pain in her own words."*
+- Sonnet: *"a pain she's articulated in her own words. She posted about expansion and open roles as facts/announcements,
+  not as a complaint about payroll complexity across states or joiner salary timing."*
+
+**What it shows**
+
+- The rewording did what it was meant to: both readers now pass R1 and R3 on the known-correct line, and they fail
+  it at the same place for the same reason — a disagreement between readers became agreement.
+- Fixing one check exposed the next. The guard moved from R1/R3 to R4 — the loop stops at the first failure, so R4
+  was never reached before.
+- R4 asks about a pain she has *been through*, but the reader is told only what she knows **this week**
+  (`KNOWN_TO_HER` = trigger + current facts, `nodes.py::score`). The evidence of her lived pain is in the dormant
+  CRM notes — n2 *separate payroll processes across regions*, n3 *manual reconciliation between regional payroll
+  teams* — and the reader never sees them. Both readers say, in effect, "no evidence she has lived this".
+- "Joiner" is the prospect's own register (Indian HR usage; the expansion is into states); Haiku calls it seller's
+  jargon. The reader has no signal for whose words are whose.
+
+Not changed: R4, and what the reader is shown. Both are decisions on the procedure. Neither reader clears the
+guard, so the reader stays on the kit default (Haiku 4.5), the cheaper one; the full Sunidhi runs were not repeated
+since the guard already fails.
