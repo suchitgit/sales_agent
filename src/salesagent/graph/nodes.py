@@ -9,11 +9,11 @@ from ..models import get_model, parse_json
 from ..stores.context import get_context
 from ..stores.retrieval import Retrieval
 from ..stores.memory import load_cases, past_decisions, rep_profile
-from ..stores.graph import KnowledgeGraph
+from ..stores.graph import get_graph
 from ..guards.approval import request_approval
 from ..guards.idempotency import send_key, send_once
 
-_ret, _kg = Retrieval(), KnowledgeGraph()
+_ret, _kg = Retrieval(), get_graph()
 T = lambda step, detail, actor="code", label="READ": {"step": step, "detail": detail, "actor": actor, "label": label}
 
 
@@ -45,7 +45,7 @@ def fetch(state, *, store: BaseStore = None):
     tr = [T("fetch · context", f"trigger={'none' if not ctx['has_live_trigger'] else ctx['trigger']} · roles={ctx['open_roles']}"),
           T("fetch · retrieval", f"{len(retrieved) - len(flagged)} dormant facts" + (f" · {len(flagged)} note(s) flagged as instruction-like: {', '.join(f['id'] for f in flagged)} — kept as data, excluded from the prompt" if flagged else "")),
           T("fetch · memory", f"{len(mem['cases'])} past decisions with outcomes, from {cases_from} · rep habits loaded"),
-          T("fetch · knowledge graph", f"{len(pains)} trigger→pain mappings · archetype: {kg['archetype']['label']}")]
+          T("fetch · knowledge graph", f"{len(pains)} trigger→pain mappings, from {_kg.source} · archetype: {kg['archetype']['label']}")]
     return {"context": ctx, "retrieved": retrieved, "memory": mem, "kg": kg, "trace": tr}
 
 
