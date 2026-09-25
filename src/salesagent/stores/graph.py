@@ -17,7 +17,9 @@ class KnowledgeGraph:
 
     def top_archetype(self, role: str, industry: str) -> dict:
         cands = [a for a in self.g["archetypes"] if any(x in (role + " " + industry) for x in a["earns_read_from"])]
-        return max(cands or self.g["archetypes"], key=lambda a: a["weight"])
+        if not cands:  # say so; falling back to the highest weight would put a false archetype in the trace
+            return {"id": "none", "label": "no archetype matches this role — nothing earns the read here", "weight": 0}
+        return max(cands, key=lambda a: a["weight"])
 
     def reader_trace(self) -> list[dict]:
         return self.traces["reader"]
