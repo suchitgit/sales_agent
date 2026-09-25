@@ -1,0 +1,6 @@
+﻿stores_present,line_that_ships,scored,rejected,verdict
+T0 · basic only,Consolidating multi-state payroll & compliance at LogiTrans,no,,automation
+T1 · + context,Supporting LogiTrans's expansion and 120 open roles,no,,automation
+T2 · + retrieval,Multi-state payroll compliance across 3 new states,no,,automation
+T5 · + memory,Multi-state payroll compliance across 3 new states,no,,automation
+T7 · + knowledge graph,"3 new states, one payroll run, before your first joiner's salary date",yes,A@R3 B@R3,intelligence

@@ -1,0 +1,7 @@
+﻿stage,stage_label,procedure_commit,procedure_change,reader,reader_model,scores,cleared,died_at_R1,died_at_R2,died_at_R3,died_at_R4,died_at_R5,died_at_R6
+0,Kit wording,kit-v1,R1–R6 as handed over,haiku,claude-haiku-4-5-20251001,2,0,2,0,0,0,0,0
+0,Kit wording,kit-v1,R1–R6 as handed over,sonnet,claude-sonnet-5,2,0,0,0,2,0,0,0
+1,R1 and R3 reworded,b7cdc44,R1: fails only on stale news. R3: may mention what she knows; passes if it adds one thing she has not computed.,haiku,claude-haiku-4-5-20251001,3,0,0,0,0,3,0,0
+1,R1 and R3 reworded,b7cdc44,R1: fails only on stale news. R3: may mention what she knows; passes if it adds one thing she has not computed.,sonnet,claude-sonnet-5,3,0,0,0,0,3,0,0
+2,Reader given her history,7827378,"KNOWN_TO_HER adds the CRM notes marked her_experience (n2, n3). R4 wording unchanged.",haiku,claude-haiku-4-5-20251001,3,0,0,0,0,3,0,0
+2,Reader given her history,7827378,"KNOWN_TO_HER adds the CRM notes marked her_experience (n2, n3). R4 wording unchanged.",sonnet,claude-sonnet-5,3,0,0,0,0,3,0,0

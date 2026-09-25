@@ -1,0 +1,28 @@
+﻿session_id,session_title,stage,stage_label,procedure_commit,reader,reader_model,source,prospect,run_no,outcome,winner_line,candidates,deaths_in_order
+stub,Stub baseline,0,Kit wording,kit-v1,stub,stub model,local · deterministic stub,sunidhi,1,winner,"3 new states, one payroll run, before your first joiner's salary date",3,R3 R3
+stub,Stub baseline,0,Kit wording,kit-v1,stub,stub model,local · deterministic stub,arun,1,winner,"60 hires across new depots, one onboarding run, before the first depot goes live",3,R1 R3
+stub,Stub baseline,0,Kit wording,kit-v1,stub,stub model,local · deterministic stub,nikhil,1,declined,,0,
+s1,First API runs · Haiku reader,0,Kit wording,kit-v1,haiku,claude-haiku-4-5-20251001,local · run_one / probes,sunidhi,1,no winner,,3,R1 R1 R1
+s1,First API runs · Haiku reader,0,Kit wording,kit-v1,haiku,claude-haiku-4-5-20251001,local · run_one / probes,sunidhi,2,no winner,,3,R1 R1 R1
+s1,First API runs · Haiku reader,0,Kit wording,kit-v1,haiku,claude-haiku-4-5-20251001,local · run_one / probes,sunidhi,3,no winner,,3,R3 R1 R3
+s2,Reader swapped · Sonnet reader,0,Kit wording,kit-v1,sonnet,claude-sonnet-5,local · probes,sunidhi,1,no winner,,3,R1 R3 R3
+s2,Reader swapped · Sonnet reader,0,Kit wording,kit-v1,sonnet,claude-sonnet-5,local · probes,sunidhi,2,no winner,,3,R3 R3 R3
+s2,Reader swapped · Sonnet reader,0,Kit wording,kit-v1,sonnet,claude-sonnet-5,local · probes,sunidhi,3,no winner,,3,R3 R2 R3
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,sunidhi,1,no winner,,3,R4 R1 R3
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,nikhil,1,declined,,0,
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,arun,1,no winner,,3,R1 R1 R1
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,sunidhi,2,no winner,,3,R4 R4 R4
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,nikhil,2,declined,,0,
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,arun,2,no winner,,3,R1 R1 R1
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,sunidhi,3,no winner,,3,R4 R4 R2
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,nikhil,3,declined,,0,
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,1,R1 and R3 reworded,b7cdc44,haiku,claude-haiku-4-5-20251001,LangSmith · reader-haiku-37feeb55,arun,3,no winner,,3,R1 R1 R2
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,sunidhi,1,no winner,,3,R4 R4 R3
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,nikhil,1,declined,,0,
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,arun,1,no winner,,3,R2 R2 R3
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,sunidhi,2,no winner,,3,R4 R4 R4
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,nikhil,2,declined,,0,
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,arun,2,no winner,,3,R2 R3 R3
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,sunidhi,3,no winner,,3,R4 R2 R4
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,nikhil,3,declined,,0,
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,1,R1 and R3 reworded,b7cdc44,sonnet,claude-sonnet-5,LangSmith · reader-sonnet-fdbe5004,arun,3,no winner,,3,R2 R3 R3

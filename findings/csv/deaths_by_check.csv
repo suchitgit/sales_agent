@@ -1,0 +1,5 @@
+﻿session_id,session_title,reader,reader_model,stage,lines_judged,died_at_R1,died_at_R2,died_at_R3,died_at_R4,died_at_R5,died_at_R6,winners
+s1,First API runs · Haiku reader,haiku,claude-haiku-4-5-20251001,0,9,7,0,2,0,0,0,0
+s2,Reader swapped · Sonnet reader,sonnet,claude-sonnet-5,0,9,1,1,7,0,0,0,0
+reader-haiku-37feeb55,LangSmith experiment · Haiku reader,haiku,claude-haiku-4-5-20251001,1,18,9,2,1,6,0,0,0
+reader-sonnet-fdbe5004,LangSmith experiment · Sonnet reader,sonnet,claude-sonnet-5,1,18,0,5,6,7,0,0,0
