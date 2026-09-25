@@ -127,3 +127,22 @@ side in LangSmith → Datasets → compare. Procedure as in commit b7cdc44 (R1/R
 - `consistency` fails with both readers: on the API, different candidates die at different checks, so the step
   names differ run to run. The README anticipates this ("on the API this can be legitimate"); it is variance, recorded.
 - Null safety holds everywhere: Nikhil declined in all 6 runs.
+
+## After giving the reader her history (commit 7827378) — `make guard`, pass^3 per reader
+
+The reader's `KNOWN_TO_HER` now includes what she has been through: CRM notes marked `"her_experience": true`
+(n2 separate regional payroll processes, n3 the reconciliation discussion). R4 wording unchanged.
+
+| Reader | Guard | R1–R3 | Died at | Reason (as returned) |
+|---|---|---|---|---|
+| Haiku 4.5 | **0/3** | pass ×3 | R4 ×3 | "uses seller's jargon ('joiner's salary date') rather than the prospect's own words" |
+| Sonnet 5 | **0/3** | pass ×3 | R4 ×3 | "seller-style phrasing ('one payroll run', 'first joiner's salary date') rather than her own words like 'manual reconciliation between regional payroll teams' or 'separate payroll processes across regions'" |
+
+- The history did its job on the *evidence* half of R4: "no evidence she has lived this" is gone; Sonnet now
+  quotes n2 and n3 back as the pain she has been through.
+- What remains is the *words* half — R4's kill text, "In the words I would use, not the seller's." Both readers
+  take it as verbatim: "one payroll run" fails because her history says "separate payroll processes". The known
+  line names her pain from the other side (the consequence, not the complaint); the reader wants the complaint.
+- R3 did not get stricter with the richer known set: the known line cleared R1–R3 in all six runs.
+- The reader failed for the same reason the writer did at T1 — it did not have her history. With it, the
+  remaining failure is a reading of the check, not missing material.

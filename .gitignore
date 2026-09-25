@@ -9,3 +9,4 @@ data/synthetic/*
 !data/synthetic/.gitkeep
 requirements.lock
 .DS_Store
+.deepeval/
