@@ -1,6 +1,14 @@
 import sys; sys.path.insert(0, "src")
-from salesagent.evals.suite import run_once, run_suite
+from salesagent.evals.suite import run_once, run_suite, score_line, KNOWN_WINNER
 from salesagent.guards.sanitize import sanitize
+
+def test_reader_clears_the_known_winning_line():
+    """Guard, pass^3: the known-correct line must clear all six checks with the active reader, three runs out
+    of three. If it fails, the checks are wrong, not the line. On the API: make guard."""
+    runs = [score_line("sunidhi", KNOWN_WINNER["sunidhi"]) for _ in range(3)]
+    deaths = [f"run {i}: died at {r['died_at']} — {r['reason']}" for i, r in enumerate(runs) if r["died_at"]]
+    assert not deaths, "the reader rejected the known winning line:\n" + "\n".join(deaths)
+    assert all(len(r["results"]) == 6 for r in runs)
 
 def test_sunidhi_reaches_a_clock_line():
     out = run_once("sunidhi", "t-sunidhi")

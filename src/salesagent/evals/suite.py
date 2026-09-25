@@ -5,8 +5,22 @@ from langgraph.checkpoint.memory import InMemorySaver
 from langgraph.store.memory import InMemoryStore
 from langgraph.types import Command
 from ..graph.spine import build
+from ..graph import nodes
 from ..stores.context import load_prospects
 from .checks import CHECKS
+
+# The experiment's T7 result. A known-good case the reader must not flip: if this line fails a check,
+# the check is wrong, not the line.
+KNOWN_WINNER = {"sunidhi": "3 new states, one payroll run, before your first joiner's salary date"}
+
+
+def score_line(prospect_id: str, text: str) -> dict:
+    """Score one given line against the reader trace with the active reader. No generation."""
+    st = {"prospect_id": prospect_id, "rep_id": "rep-suchit"}
+    st.update(nodes.fetch(st))
+    st.update(nodes.assemble(st))
+    st["candidates"] = [{"id": "K", "text": text, "results": [], "died_at": None, "reason": None}]
+    return nodes.score(st)["candidates"][0]
 
 
 def run_once(prospect_id: str, thread: str, auto_approve: bool = True) -> dict:

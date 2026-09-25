@@ -2,8 +2,8 @@
   "reader": [
     {
       "id": "R1",
-      "q": "Is this about my situation now?",
-      "kill": "Anything about last quarter is gone."
+      "q": "Is this about my situation now? It passes if it refers to what is happening or coming next. It fails only if it is about something already over — stale news.",
+      "kill": "it is about something already over — stale news. Referring to what is happening or coming next is not a failure."
     },
     {
       "id": "R2",
@@ -12,8 +12,8 @@
     },
     {
       "id": "R3",
-      "q": "Is there something I had not already thought of?",
-      "kill": "A fact I already know earns nothing."
+      "q": "Is there something here I had not already worked out? The line may mention what I know. It passes if it adds one thing I have not computed — a deadline, a consequence, a number that follows from my situation. It fails only if everything in it is already known to me.",
+      "kill": "everything in it is already known to me. Mentioning what I know is not a failure when the line also adds one thing I have not computed."
     },
     {
       "id": "R4",
