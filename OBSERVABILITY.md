@@ -33,7 +33,7 @@ Then open LangSmith → project `sales-agent` for traces; → Datasets → `sale
 
 ## What to look at first
 1. In LangSmith, one Sunidhi trace end to end: 7 nodes, the two model-call points, the interrupt and the resume.
-2. Two experiments, `reader-haiku` and `reader-sonnet`, on the same dataset: the `known_winner_clears` column is the guard test; the `consistency` column is pass^k.
+2. Two experiments, `reader-haiku` and `reader-sonnet`, on the same dataset. Each prospect runs k times (`--k`, default 3). Two experiment-level columns: `known_winner_clears` is the guard test — the known winning line scored by that experiment's reader, k out of k (same as `make guard`); `consistency` is one step path per prospect across the k runs. The per-run columns (`r3`, `competitor`, `null_safety`, `trace`) give pass^k per prospect.
 3. In DeepEval's output: rows where the deterministic R3 (the reader's verdict) and the judged Novelty disagree.
 
 ## Rules
