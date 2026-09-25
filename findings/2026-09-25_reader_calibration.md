@@ -1,0 +1,71 @@
+# Reader calibration — same procedure, two readers, the winning line rejected
+
+**Date:** 25 Sep 2026 · **Prospect:** Sunidhi (VP HR, LogiTrans) · **Writer:** `claude-sonnet-5` (every run)
+**Procedure:** `data/seed/traces.json` as shipped in `kit-v1` — the reader checks at that point:
+
+| Check | `q` | `kill` (read by the model as the failure rule) |
+|---|---|---|
+| R1 | Is this about my situation now? | Anything about last quarter is gone. |
+| R2 | Does it need me now, or can it wait? Is there a clock on it? | No clock, no urgency. |
+| R3 | Is there something I had not already thought of? | A fact I already know earns nothing. |
+
+R4–R6 unchanged throughout. Each check is one reader call; the loop stops at the first failure.
+
+## Before the wording change
+
+### Table 1 — reader `claude-haiku-4-5-20251001` (temperature 0) · 0 of 3 runs produced a winner
+
+| Run | Cand. | Line (written by Sonnet 5) | Died at |
+|---|---|---|---|
+| 0 | A | Your 45-day window before multi-state payroll risk | R1 |
+| 0 | B | 3 new states, one compliance clock now running | R1 |
+| 0 | C | Before payroll runs in state #1: a compliance check | R1 |
+| 1 | A | Your 30-day window for multi-state statutory compliance | R1 |
+| 1 | B | 120 open roles, 3 payroll systems — one compliance clock | R1 |
+| 1 | C | Before the first paycheck: multi-state payroll readiness | R1 |
+| 2 | A | 120 open roles, 3 new states: your compliance clock starts now | R3 |
+| 2 | B | Statutory filings for 3 states are due before your first payroll run | R1 |
+| 2 | C | 30 days to register payroll in 3 new states—are you covered? | R3 |
+
+**7 of 9 died at R1, 2 at R3.** Run 0's full trace, with every reason, is
+`2026-09-25_before_haiku_run0.trace.json` (`sales.trace.v1`, importable on the site). A typical R1 reason:
+*"focuses on a future risk scenario ('45-day window before') rather than addressing her current situation"* —
+the reader treated a forward-looking line as failing "about my situation now". Reasons for runs 1–2 were not
+captured (only the death point was printed).
+
+### Table 2 — reader `claude-sonnet-5` (no temperature: the model rejects it) · 0 of 3 runs produced a winner
+
+| Run | Cand. | Line (written by Sonnet 5) | Died at | Reason (as returned, trimmed) |
+|---|---|---|---|---|
+| 0 | A | 30-Day Compliance Window Before Your First Payroll Run | R1 | references a compliance deadline tied to a first payroll run, not the known context of expanding into three new states or 120 open roles |
+| 0 | B | 3 States, 1 Payroll Deadline: Are You Registered? | R3 | Merely restates the known expansion-into-three-states fact and infers an obvious payroll registration concern |
+| 0 | C | Before Onboarding 120 Roles Across 3 States, This Comes First | R3 | Just restates known facts (120 roles, 3 states) framed as urgency without revealing a new insight |
+| 1 | A | 3-State Payroll Compliance: 30-Day Countdown Starts Now | R3 | Just restates known expansion news with a generic urgency hook |
+| 1 | B | 120 Hires, 3 States — One Payroll Clock Ticking | R3 | 'payroll clock ticking' is a vague implication, not a genuinely new fact or angle |
+| 1 | C | Statutory Deadline for New-State Payroll: 30 Days Out | R3 | a generic statutory deadline reminder doesn't reveal anything new |
+| 2 | A | 30 Days to Statutory Compliance in Your Newest States | R3 | Just restates the known expansion news (new states) |
+| 2 | B | One Payroll System, Three New State Rules—Ready? | R2 | No explicit deadline or time pressure indicated |
+| 2 | C | 120 Roles to Fill Before Compliance Clock Runs Out | R3 | Just restates known facts (120 open roles, expansion implies compliance pressure) |
+
+**1 died at R1, 1 at R2, 7 at R3.**
+
+### Table 3 — the known winning line, scored directly (no generation), two runs per reader
+
+Line: **"3 new states, one payroll run, before your first joiner's salary date"** (the T7 result of the experiment).
+
+| Reader | Run 0 | Run 1 | Reason |
+|---|---|---|---|
+| Haiku 4.5 | R1 | R1 | "mentions 'before your first joiner's salary date' which is forward-looking/future-oriented, but fails the check requirement that 'anything about last quarter is gone'" |
+| Sonnet 5 | R3 | R3 | "Just restates the known fact (3 new states) plus a generic payroll/compliance angle she'd already assume" · "a mirror of her own LinkedIn post—nothing new is surfaced" |
+
+## What it shows
+
+- **Same procedure, two readers, the known-correct line rejected — at different checks, for different reasons.**
+  Haiku read R1's `kill` text literally as a rule the line breaks. Sonnet read R3 as "fails if it mentions
+  anything she knows", ignoring the computed deadline the line adds.
+- A reader that rejects the known-correct answer cannot produce a winner, however good the writer is.
+  **Measure the reader before you trust it.**
+- A single run would have hidden this or blamed the writer; three runs per reader, plus the known-good line,
+  located it. This is the argument for pass^k.
+- Second-order, not yet addressed: Sonnet's deadlines are generic ("30 days", "compliance clock") rather than
+  built from her own numbers the way "first joiner's salary date" is.

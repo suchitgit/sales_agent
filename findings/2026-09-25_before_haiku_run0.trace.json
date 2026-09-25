@@ -1,0 +1,147 @@
+{
+  "kind": "sales.trace.v1",
+  "prospect": "sunidhi",
+  "prospectName": "Sunidhi Rao \u00b7 VP HR, LogiTrans",
+  "stores": [
+    "context",
+    "retrieval",
+    "memory",
+    "kg"
+  ],
+  "verdict": "none",
+  "createdAt": 1790308155353,
+  "candidates": [
+    {
+      "id": "A",
+      "text": "Your 45-day window before multi-state payroll risk",
+      "needs": [
+        "context",
+        "retrieval",
+        "memory",
+        "kg"
+      ],
+      "died_at": "R1",
+      "reason": "The subject line focuses on a future risk scenario ('45-day window before') rather than addressing her current situation. While it references multi-state payroll (relevant to the expansion she posted about), it doesn't acknowledge the immediate reality: LogiTrans is actively expanding NOW with 120 open roles. The subject treats this as a looming problem rather than a present opportunity/challenge she's dealing with today.",
+      "results": [
+        {
+          "id": "R1",
+          "ok": false,
+          "why": "The subject line focuses on a future risk scenario ('45-day window before') rather than addressing her current situation. While it references multi-state payroll (relevant to the expansion she posted about), it doesn't acknowledge the immediate reality: LogiTrans is actively expanding NOW with 120 open roles. The subject treats this as a looming problem rather than a present opportunity/challenge she's dealing with today."
+        }
+      ]
+    },
+    {
+      "id": "B",
+      "text": "3 new states, one compliance clock now running",
+      "needs": [
+        "context",
+        "retrieval",
+        "memory",
+        "kg"
+      ],
+      "died_at": "R1",
+      "reason": "The subject line fails the R1 check. While it mentions '3 new states' (current situation), it omits critical context from last week about LogiTrans's expansion that Sunidhi already posted. The phrase 'one compliance clock now running' is new, but the omission of the established expansion narrative makes this feel disconnected from her known situation rather than building on it.",
+      "results": [
+        {
+          "id": "R1",
+          "ok": false,
+          "why": "The subject line fails the R1 check. While it mentions '3 new states' (current situation), it omits critical context from last week about LogiTrans's expansion that Sunidhi already posted. The phrase 'one compliance clock now running' is new, but the omission of the established expansion narrative makes this feel disconnected from her known situation rather than building on it."
+        }
+      ]
+    },
+    {
+      "id": "C",
+      "text": "Before payroll runs in state #1: a compliance check",
+      "needs": [
+        "context",
+        "retrieval",
+        "memory",
+        "kg"
+      ],
+      "died_at": "R1",
+      "reason": "The subject line is about a future action ('Before payroll runs') and doesn't reference the current situation of LogiTrans's expansion into three new states that Sunidhi posted about last week. It fails the R1 check because it doesn't acknowledge what's happening now - the expansion and 120 open roles are absent from the message.",
+      "results": [
+        {
+          "id": "R1",
+          "ok": false,
+          "why": "The subject line is about a future action ('Before payroll runs') and doesn't reference the current situation of LogiTrans's expansion into three new states that Sunidhi posted about last week. It fails the R1 check because it doesn't acknowledge what's happening now - the expansion and 120 open roles are absent from the message."
+        }
+      ]
+    }
+  ],
+  "winner": null,
+  "steps": [
+    {
+      "step": "plan",
+      "detail": "S1\u2013S5 loaded from the knowledge graph as a constant; the model decides nothing here",
+      "actor": "code",
+      "label": "READ"
+    },
+    {
+      "step": "fetch \u00b7 context",
+      "detail": "trigger=Last week, Sunidhi posted that LogiTrans is expanding into three new states. \u00b7 roles=120",
+      "actor": "code",
+      "label": "READ"
+    },
+    {
+      "step": "fetch \u00b7 retrieval",
+      "detail": "4 dormant facts \u00b7 1 note(s) flagged as instruction-like: n11 \u2014 kept as data, excluded from the prompt",
+      "actor": "code",
+      "label": "READ"
+    },
+    {
+      "step": "fetch \u00b7 memory",
+      "detail": "2 past decisions with outcomes, from seed file \u00b7 rep habits loaded",
+      "actor": "code",
+      "label": "READ"
+    },
+    {
+      "step": "fetch \u00b7 knowledge graph",
+      "detail": "3 trigger\u2192pain mappings, from seed file \u00b7 archetype: expansion trigger + a computed clock",
+      "actor": "code",
+      "label": "READ"
+    },
+    {
+      "step": "assemble",
+      "detail": "material only, no deadline supplied \u00b7 budget 1600 chars \u00b7 used {'context': 162, 'retrieval': 400, 'memory': 160, 'kg': 480} \u00b7 derived signals excluded as inert",
+      "actor": "code",
+      "label": "READ"
+    },
+    {
+      "step": "generate",
+      "detail": "model call 1 \u2192 3 candidates",
+      "actor": "model",
+      "label": "HYPOTHESIS"
+    },
+    {
+      "step": "score A \u00b7 rejected at R1",
+      "detail": "\u201cYour 45-day window before multi-state payroll risk\u201d \u2014 The subject line focuses on a future risk scenario ('45-day window before') rather than addressing her current situation. While it references multi-state payroll (relevant to the expansion she posted about), it doesn't acknowledge the immediate reality: LogiTrans is actively expanding NOW with 120 open roles. The subject treats this as a looming problem rather than a present opportunity/challenge she's dealing with today.",
+      "actor": "model",
+      "label": "HYPOTHESIS"
+    },
+    {
+      "step": "score B \u00b7 rejected at R1",
+      "detail": "\u201c3 new states, one compliance clock now running\u201d \u2014 The subject line fails the R1 check. While it mentions '3 new states' (current situation), it omits critical context from last week about LogiTrans's expansion that Sunidhi already posted. The phrase 'one compliance clock now running' is new, but the omission of the established expansion narrative makes this feel disconnected from her known situation rather than building on it.",
+      "actor": "model",
+      "label": "HYPOTHESIS"
+    },
+    {
+      "step": "score C \u00b7 rejected at R1",
+      "detail": "\u201cBefore payroll runs in state #1: a compliance check\u201d \u2014 The subject line is about a future action ('Before payroll runs') and doesn't reference the current situation of LogiTrans's expansion into three new states that Sunidhi posted about last week. It fails the R1 check because it doesn't acknowledge what's happening now - the expansion and 120 open roles are absent from the message.",
+      "actor": "model",
+      "label": "HYPOTHESIS"
+    },
+    {
+      "step": "select",
+      "detail": "no candidate cleared all six",
+      "actor": "code",
+      "label": "HYPOTHESIS"
+    },
+    {
+      "step": "send",
+      "detail": "nothing left the system",
+      "actor": "code",
+      "label": "READ"
+    }
+  ]
+}
