@@ -1,0 +1,56 @@
+{
+  "reader": [
+    {
+      "id": "R1",
+      "q": "Is this about my situation now?",
+      "kill": "Anything about last quarter is gone."
+    },
+    {
+      "id": "R2",
+      "q": "Does it need me now, or can it wait? Is there a clock on it?",
+      "kill": "No clock, no urgency."
+    },
+    {
+      "id": "R3",
+      "q": "Is there something I had not already thought of?",
+      "kill": "A fact I already know earns nothing."
+    },
+    {
+      "id": "R4",
+      "q": "Does it name a pain I have actually been through?",
+      "kill": "In the words I would use, not the seller's."
+    },
+    {
+      "id": "R5",
+      "q": "Is there an upside, or only a warning?",
+      "kill": "Warnings alone are ignored."
+    },
+    {
+      "id": "R6",
+      "q": "Does this land on me, or on someone else in my organisation?",
+      "kill": "Not my decision, not my read."
+    }
+  ],
+  "seller": [
+    {
+      "id": "S1",
+      "q": "Which of our capabilities touches what she is dealing with now, or will be within a quarter?"
+    },
+    {
+      "id": "S2",
+      "q": "Which of HER goals does that capability move? Not the company's \u2014 hers."
+    },
+    {
+      "id": "S3",
+      "q": "Where do we have evidence? A comparable situation we have handled."
+    },
+    {
+      "id": "S4",
+      "q": "What is the job she would hire us for? State it as her progress, never as our product."
+    },
+    {
+      "id": "S5",
+      "q": "Of the candidates that survive, which one scores highest against the reader's trace?"
+    }
+  ]
+}

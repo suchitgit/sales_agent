@@ -1,0 +1,61 @@
+{
+  "archetypes": [
+    {
+      "id": "computed_clock",
+      "label": "expansion trigger + a computed clock",
+      "earns_read_from": [
+        "VP HR",
+        "logistics"
+      ],
+      "weight": 0.9
+    },
+    {
+      "id": "named_pain",
+      "label": "a pain named in her words",
+      "earns_read_from": [
+        "VP HR",
+        "Head of Operations"
+      ],
+      "weight": 0.7
+    },
+    {
+      "id": "congratulation",
+      "label": "congratulation on the news",
+      "earns_read_from": [],
+      "weight": 0.1
+    },
+    {
+      "id": "vendor_intro",
+      "label": "the vendor describing itself",
+      "earns_read_from": [],
+      "weight": 0.05
+    }
+  ],
+  "trigger_pain": [
+    {
+      "trigger": "new states",
+      "pain": "multi-state statutory compliance",
+      "priority": 1
+    },
+    {
+      "trigger": "new states",
+      "pain": "payroll run across states",
+      "priority": 2
+    },
+    {
+      "trigger": "open roles",
+      "pain": "onboarding at scale",
+      "priority": 3
+    },
+    {
+      "trigger": "separate regional payroll",
+      "pain": "payroll consolidation",
+      "priority": 2
+    },
+    {
+      "trigger": "new depots",
+      "pain": "onboarding at scale",
+      "priority": 1
+    }
+  ]
+}

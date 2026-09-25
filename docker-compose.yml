@@ -1,0 +1,23 @@
+services:
+  neo4j:
+    image: neo4j:5
+    container_name: sales-neo4j
+    ports: ["7474:7474", "7687:7687"]
+    environment:
+      NEO4J_AUTH: "${NEO4J_USER:-neo4j}/${NEO4J_PASSWORD:-sales-sandbox-pw}"
+      NEO4J_PLUGINS: '["apoc"]'
+    volumes: [neo4j_data:/data]
+    healthcheck: { test: ["CMD-SHELL", "wget -qO- http://localhost:7474 >/dev/null 2>&1 || exit 1"], interval: 5s, timeout: 5s, retries: 24 }
+  postgres:
+    image: postgres:16
+    container_name: sales-postgres
+    ports: ["5432:5432"]
+    environment:
+      POSTGRES_USER: "${POSTGRES_USER:-sales}"
+      POSTGRES_PASSWORD: "${POSTGRES_PASSWORD:-sales-sandbox-pw}"
+      POSTGRES_DB: "${POSTGRES_DB:-sales}"
+    volumes: [pg_data:/var/lib/postgresql/data]
+    healthcheck: { test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER:-sales}"], interval: 5s, timeout: 5s, retries: 20 }
+volumes:
+  neo4j_data:
+  pg_data:

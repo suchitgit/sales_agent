@@ -1,0 +1,47 @@
+[
+  {
+    "id": "D1",
+    "context": "expanding into government",
+    "pain": "compliance",
+    "choice_set": [
+      "compliance",
+      "onboarding"
+    ],
+    "chosen": "compliance",
+    "outcome": "opened"
+  },
+  {
+    "id": "D2",
+    "context": "200+ open positions",
+    "pain": "slow onboarding",
+    "choice_set": [
+      "onboarding",
+      "compliance"
+    ],
+    "chosen": "onboarding",
+    "outcome": "opened, replied"
+  },
+  {
+    "id": "D3",
+    "context": "geographic expansion, separate regional payroll teams",
+    "pain": "payroll consolidation",
+    "choice_set": [
+      "consolidation",
+      "compliance",
+      "onboarding"
+    ],
+    "chosen": "consolidation",
+    "outcome": "opened, replied, opportunity created"
+  },
+  {
+    "id": "D4",
+    "context": "geographic expansion",
+    "pain": "employee experience",
+    "choice_set": [
+      "employee experience",
+      "compliance"
+    ],
+    "chosen": "employee experience",
+    "outcome": "ignored"
+  }
+]

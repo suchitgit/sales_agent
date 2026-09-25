@@ -1,0 +1,10 @@
+.venv/
+.env
+__pycache__/
+*.pyc
+data/kuzu/
+data/index/*
+!data/index/.gitkeep
+data/synthetic/*
+!data/synthetic/.gitkeep
+requirements.lock

@@ -1,0 +1,31 @@
+{
+  "seller": "HumanAITech",
+  "provides": [
+    {
+      "capability": "multi-state statutory compliance",
+      "pains": [
+        "compliance",
+        "new states",
+        "statutory clock",
+        "payroll run"
+      ]
+    },
+    {
+      "capability": "payroll consolidation",
+      "pains": [
+        "separate regional payroll",
+        "reconciliation",
+        "fragmentation"
+      ]
+    },
+    {
+      "capability": "onboarding at scale",
+      "pains": [
+        "open roles",
+        "hiring surge",
+        "new depots",
+        "joiners"
+      ]
+    }
+  ]
+}
