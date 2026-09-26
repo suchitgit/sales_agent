@@ -6,7 +6,7 @@ import json, time
 from langchain_core.messages import HumanMessage
 from .. import config
 from ..blocks import fetch_all, build, assemble as assemble_prompt, golden
-from ..models import get_writer, parse_json, usage
+from ..models import get_writer, parse_json, text_of, usage
 from ..guards.approval import request_approval
 from ..guards.idempotency import send_key, send_once
 
@@ -50,17 +50,19 @@ def write(state):
     cid = state["condition_id"]; w = get_writer(cid, state.get("writer_which", 1))
     t = time.perf_counter(); msg = w.invoke([HumanMessage(content=state["prompt"])]); ms = round((time.perf_counter() - t) * 1000, 1)
     u = usage(msg); model = getattr(w, "model", None) or getattr(w, "model_name", None) or u.get("model")
-    out = {"raw": msg.content, "usage": {**u, "model": model}, "write_ms": ms}
+    text = text_of(msg.content)
+    stop = f" · stopped: {u['stop_reason']}" if u.get("stop_reason") not in (None, "end_turn") else ""  # max_tokens, refusal: keep as data
+    out = {"raw": text, "usage": {**u, "model": model}, "write_ms": ms}
     if CONDITIONS[cid]["mode"] == "single":
-        line = msg.content.strip().strip('"').splitlines()[0].strip().strip('"')
-        out.update(line=line, trace=[T("write", f"{model} → “{line}”", actor="model", ms=ms)])
+        line = (text.strip().strip('"').splitlines() or [""])[0].strip().strip('"')
+        out.update(line=line or None, trace=[T("write", f"{model} → “{line}”{stop}", actor="model", ms=ms)])
     else:
         try:
             j = parse_json(msg.content)
             out.update(candidates=j.get("candidates", []), seller=j.get("seller", {}), survivor=j.get("survivor"))
-            out["trace"] = [T("write · procedure", f"{model} ran S1–S5, wrote {len(out['candidates'])} candidates, scored R1–R6, chose “{out['survivor']}”", actor="model", ms=ms)]
+            out["trace"] = [T("write · procedure", f"{model} ran S1–S5, wrote {len(out['candidates'])} candidates, scored R1–R6, chose “{out['survivor']}”{stop}", actor="model", ms=ms)]
         except Exception as e:  # noqa: BLE001
-            out.update(candidates=[], survivor=None, trace=[T("write · procedure", f"{model} output was not valid JSON ({type(e).__name__}) — recorded as a procedure failure", actor="model", ms=ms)])
+            out.update(candidates=[], survivor=None, trace=[T("write · procedure", f"{model} output was not valid JSON ({type(e).__name__}){stop} — recorded as a procedure failure", actor="model", ms=ms)])
     return out
 
 

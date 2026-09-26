@@ -37,28 +37,47 @@ class ReplayStub:
         return AIMessage(content=line, response_metadata={"model": self.model})
 
 
+# Newer models reject sampling parameters with a 400 ("temperature is deprecated for this model"); on them there is
+# no temperature=0, and run-to-run variance is part of what pass^k measures.
+NO_SAMPLING = ("claude-fable", "claude-mythos", "claude-opus-5", "claude-opus-4-7", "claude-opus-4-8", "claude-sonnet-5")
+
+
+def chat(name: str, max_tokens: int):
+    """The one place a real model is constructed — writer, reader (verifier) and DeepEval judge all come here."""
+    from langchain_anthropic import ChatAnthropic
+    sampling = {} if name.startswith(NO_SAMPLING) else {"temperature": 0}
+    return ChatAnthropic(model=name, api_key=config.ANTHROPIC_API_KEY, max_tokens=max_tokens, **sampling)
+
+
 def get_writer(condition_id: str, which: int = 1):
     if config.USE_STUB:
         return ReplayStub(condition_id, "b" if which == 1 else "a")
-    from langchain_anthropic import ChatAnthropic
-    name = config.MODEL_WRITER if which == 1 else config.MODEL_WRITER_2
-    return ChatAnthropic(model=name, api_key=config.ANTHROPIC_API_KEY, max_tokens=2500)
+    # Fable 5.1 always thinks, and T7 returns the whole procedure as JSON: 2,500 tokens could cut the answer off.
+    # Billing is on tokens used, not on the cap.
+    return chat(config.MODEL_WRITER if which == 1 else config.MODEL_WRITER_2, 16000)
 
 
 def get_reader():
     if config.USE_STUB:
         return None
-    from langchain_anthropic import ChatAnthropic
-    return ChatAnthropic(model=config.MODEL_READER, api_key=config.ANTHROPIC_API_KEY, temperature=0, max_tokens=300)
+    return chat(config.MODEL_READER, 4000)
 
 
-def parse_json(text: str) -> dict:
-    text = re.sub(r"^```(?:json)?|```$", "", text.strip(), flags=re.M).strip()
+def text_of(content) -> str:
+    """A model that thinks returns a list of content blocks (thinking + text); only the text blocks are the answer."""
+    if isinstance(content, list):
+        return "".join(b.get("text", "") for b in content if isinstance(b, dict) and b.get("type") == "text")
+    return content or ""
+
+
+def parse_json(text) -> dict:
+    text = re.sub(r"^```(?:json)?|```$", "", text_of(text).strip(), flags=re.M).strip()
     m = re.search(r"\{.*\}", text, flags=re.S)
     return json.loads(m.group(0) if m else text)
 
 
 def usage(msg) -> dict:
     u = getattr(msg, "usage_metadata", None) or {}
+    meta = getattr(msg, "response_metadata", {}) or {}
     return {"input_tokens": u.get("input_tokens"), "output_tokens": u.get("output_tokens"),
-            "model": (getattr(msg, "response_metadata", {}) or {}).get("model") or (getattr(msg, "response_metadata", {}) or {}).get("model_name")}
+            "model": meta.get("model") or meta.get("model_name"), "stop_reason": meta.get("stop_reason")}

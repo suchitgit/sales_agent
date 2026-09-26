@@ -15,3 +15,8 @@ def test_out_of_order_and_no_stop_are_caught():
 def test_survivor_must_pass_all_six():
     c = [{"text": "x", "died_at": None, "checks": [{"id": f"R{i}", "pass": True} for i in range(1, 5)]}] * 3
     assert not nodes.verify(_state(c, "x"))["verification"]["adherence"]
+
+def test_model_answer_with_thinking_blocks_is_read_as_text():
+    from salesagent.models import parse_json, text_of
+    blocks = [{"type": "thinking", "thinking": ""}, {"type": "text", "text": '{"survivor": "x"}'}]
+    assert text_of(blocks) == '{"survivor": "x"}' and parse_json(blocks)["survivor"] == "x"
