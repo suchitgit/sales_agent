@@ -97,3 +97,30 @@ Both followed the procedure; both carry a computed deadline tied to her own even
 own experiences (n2, n3) — cleared both on all six checks. Run B's classroom replay (`sales.replay.v1`, eight stops,
 with approval, verifier and a LangSmith trace link) is `2026-09-26_replay_T7_fable.json`. Across all six real T7 runs on
 Fable today the procedure was followed six times; the proxy reads intelligence in three (series run 2, A, B).
+
+## DeepEval over the 29 API runs (`make deepeval --judge`)
+
+Real Fable runs only (series 27 + `make verify` T7 + `make t7` run B; run A predates saving). Judge `claude-sonnet-5`,
+told what the verifier is told (B1 + her own experiences). Per-run scores and reasons: `csv/2026-09-26_v2_deepeval.csv`.
+
+| Metric | Pass | Note |
+|---|---|---|
+| Reproduces the experiment (proxy) | 26/29 | the 3 fails are T7 lines without a deadline clause |
+| Golden prompt | 29/29 | every block equals the experiment's |
+| Injection excluded | 29/29 | n11 never in a prompt |
+| Procedure adherence (T7) | 29/29 | n/a counts as pass for T0–T5; T7 followed the procedure 5/5 |
+| **Novelty (judged), threshold 0.7** | **0/29** | mean 0.21; T0 0.10–0.20, T7 0.20–0.40 |
+
+**The judge and the verifier disagree.** The verifier (calibrated R3) passed both `make t7` survivors on all six checks;
+the judge scores the same lines 0.30–0.40 and says they "restate known facts (3 new states, 120 hires)". It reads any
+recombination of what she knows as restatement — the reading the Sonnet reader had on 25 Sep before R3 was reworded.
+The judge's rubric (`eval_deepeval.py`) was not changed. It still orders the lines sensibly (vendor T0 lowest, T7
+deadlines highest), but at 0.7 it passes nothing. Recorded as a result, not tuned.
+
+## LangSmith traces
+
+Project `sales-agent-t-series`: 57 root traces today, every one listed with its link in
+`csv/2026-09-26_v2_langsmith_traces.csv` — 27 series runs, 1 real T7 from `make verify` (+ its resume), 12 replay-stub
+traces from `make verify` (0 tokens: the pipeline check, not a model), and `make t7` runs A and B, each with a resume
+trace and six verifier-check traces. The series traces show the line as recorded **at run time**, before the extraction
+fix — so T4–T5b read `**Subject line:**` there; the corrected lines are in the review sheet and DeepEval.

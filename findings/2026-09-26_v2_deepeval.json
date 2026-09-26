@@ -1,0 +1,1022 @@
+{
+  "kind": "sales.deepeval.v2",
+  "createdAt": 1790389758596,
+  "judge": "claude-sonnet-5",
+  "rows": [
+    {
+      "condition": "T7",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387659,
+      "line": "Three new states, 120 hires \u2014 without three more payroll reconciliations",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 0.0,
+          "success": false,
+          "reason": "reproduces_experiment=False"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=True"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output restates already-known facts (three new states, 120 open roles) and simply reframes the existing payroll reconciliation issue from the 'what I have been through' section as a consequence, rather than introducing a new deadline, consequence, or figure specific to the prospect's situation. The phrase 'three more payroll reconciliations' is a derivative rephrasing of the state count, not a novel, situation-specific detail."
+        }
+      }
+    },
+    {
+      "condition": "T0",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387695,
+      "line": "Multi-state payroll compliance for LogiTrans \u2014 one platform, fewer manual checks",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The ACTUAL_OUTPUT is a generic marketing tagline that references multi-state payroll compliance and 'fewer manual checks,' but it does not introduce any new deadline, consequence, or specific number tied to LogiTrans's situation. It merely rephrases context already implied in INPUT (expansion into three states, existing separate payroll processes, and prior discussion of reducing manual reconciliation) without adding situation-specific figures like the 120 open roles or a concrete timeline/consequence. Per the evaluation steps, since no new, non-inferable fact is introduced, the score should be low."
+        }
+      }
+    },
+    {
+      "condition": "T0",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387699,
+      "line": "Multi-state payroll compliance for LogiTrans' growing driver workforce",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely rephrases existing information as a topic heading ('Multi-state payroll compliance') without introducing any new concrete deadline, consequence, or number. The input already establishes expansion into three new states, 120 open roles, and separate/manual payroll reconciliation issues across regions\u2014compliance concerns are a natural inference from these facts, not new specific data. No new numbers, deadlines, or concrete consequences are added."
+        }
+      }
+    },
+    {
+      "condition": "T0",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387702,
+      "line": "Multi-state payroll compliance for LogiTrans' growing driver workforce",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The input already establishes that LogiTrans is expanding into three new states and has 120 open roles, with separate regional payroll processes. The actual output merely rephrases these known facts into a generic phrase about 'multi-state payroll compliance for growing driver workforce' without introducing any new specific figure, deadline, or consequence tied to the prospect's situation. It offers no new data point (e.g., a specific compliance risk, cost figure, or timeline) beyond what is already implied or stated in the input."
+        }
+      }
+    },
+    {
+      "condition": "T1",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387706,
+      "line": "3 new states, 120 open roles \u2014 one payroll system, Sunidhi?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The ACTUAL_OUTPUT only restates facts already known from INPUT (3 new states, 120 open roles) and references 'one payroll system' which is a generalization of the already-mentioned reconciliation discussion, not a new deadline, consequence, or specific number. No new specific figure, deadline, or consequence is introduced beyond what INPUT establishes."
+        }
+      }
+    },
+    {
+      "condition": "T1",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387710,
+      "line": "Three new states, 120 open roles \u2014 one payroll system for all of it",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The ACTUAL_OUTPUT only restates facts already given in INPUT\u2014three new states, 120 open roles\u2014and combines them with the payroll unification idea already implied by HR's discussion of reducing manual reconciliation. It introduces no new concrete deadline, consequence, or number specific to LogiTrans's current situation; it merely rephrases and consolidates existing information into a punchy line, which per the steps warrants a low score."
+        }
+      }
+    },
+    {
+      "condition": "T1",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387714,
+      "line": "Three new states, 120 open roles \u2014 one payroll and compliance backbone for LogiTrans",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The ACTUAL_OUTPUT merely restates facts already given in INPUT (three new states, 120 open roles) and rephrases the payroll consolidation idea implied by 'reducing manual reconciliation between regional payroll teams' as 'one payroll and compliance backbone.' It introduces no new deadline, consequence, or figure beyond what INPUT already establishes; 'compliance' is a slight addition but not a concrete new number or deadline, and the phrase largely summarizes existing context rather than adding a specific new insight."
+        }
+      }
+    },
+    {
+      "condition": "T2",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387721,
+      "line": "Three new states, one payroll process \u2014 before the 120 hires land",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.3,
+          "success": false,
+          "reason": "The output recombines only facts already given in the input (three new states, 120 open roles/hires, and the idea of unifying payroll from the reconciliation context) without adding any new figure, deadline, or consequence. The phrase 'before the 120 hires land' implies urgency but does not introduce a genuinely new fact\u2014it's a rephrasing of existing numbers to create a catchy line. Per the rubric, this counts as restating/generalizing known information rather than providing new, situation-specific insight, warranting a low score."
+        }
+      }
+    },
+    {
+      "condition": "T2",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387725,
+      "line": "Three new states, 120 open roles \u2014 one payroll process for all of them?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The ACTUAL_OUTPUT restates the three new states and 120 open roles, both already explicitly given in the INPUT, without adding any new deadline, consequence, or number. The phrase 'one payroll process for all of them' references the payroll consolidation topic from HR discussions, but this is a rephrasing of prior context rather than new situation-specific information. No novel numeric or consequence detail is introduced beyond what was already known."
+        }
+      }
+    },
+    {
+      "condition": "T2",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387731,
+      "line": "Three new states, 120 open roles \u2014 one payroll process instead of several?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely restates facts already given in the input (three new states, 120 open roles, multiple regional payroll processes) and rephrases them into a rhetorical question. It does not introduce any new concrete deadline, consequence, or number specific to LogiTrans's situation beyond what was already known or implied. Per step 3, this warrants a low score."
+        }
+      }
+    },
+    {
+      "condition": "T3",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387734,
+      "line": "Three new states, 120 open roles \u2014 one payroll process for all of it?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely restates facts already known from the input (three new states, 120 open roles) and reframes the payroll consolidation idea as a rhetorical question. It does not introduce any new concrete deadline, consequence, or number beyond what the prospect already knows or could infer from her own situation."
+        }
+      }
+    },
+    {
+      "condition": "T3",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387738,
+      "line": "Three new states, 120 open roles \u2014 one payroll process?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The output merely restates facts already known to the prospect (three new states, 120 open roles) and rephrases the pain point of separate payroll processes already mentioned in the 'what I have been through' section as a rhetorical question. It introduces no new deadline, consequence, or specific figure beyond what is already established in the INPUT\u2014no new timeline, cost impact, or quantified consequence is added. This is a restatement/rephrasing of existing knowledge rather than genuinely new situation-specific information."
+        }
+      }
+    },
+    {
+      "condition": "T3",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387745,
+      "line": "Three new states, 120 hires, and separate payroll runs in each region",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The ACTUAL_OUTPUT merely restates facts already given in the INPUT: three new states, 120 open roles, and separate regional payroll processes are all explicitly stated or implied in the INPUT. It introduces no new deadline, consequence, or number specific to the prospect's situation\u2014there is no fresh insight like a cost estimate, timeline, or risk that the prospect hadn't already worked out. This is a trivial rephrasing/combination of existing information, not new value-add content."
+        }
+      }
+    },
+    {
+      "condition": "T4",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387756,
+      "line": "3 new states, 3 new payroll rulebooks \u2014 LogiTrans' compliance setup before the 120 hires land",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The input already discloses the key facts: 3 new states, 120 open roles, and separate/regional payroll processes needing reconciliation. The output's '3 new payroll rulebooks' is not a new concrete fact from the situation\u2014it's an inferred rephrasing that combines '3 states' with the already-known 'separate payroll processes' detail, not a new date, figure, or consequence specific to LogiTrans. It restates known information in punchier language rather than surfacing new situation-specific insight, so it fails the bar for genuinely new, concrete additions."
+        }
+      }
+    },
+    {
+      "condition": "T4",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387766,
+      "line": "Three new states \u2014 payroll compliance before the first hire lands",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.4,
+          "success": false,
+          "reason": "The output restates 'three new states,' which was already explicitly known from the input, and does not introduce any new number. While it ties in a consequence ('payroll compliance before the first hire lands') that references the known payroll reconciliation issue, this is a qualitative inference rather than a genuinely new quantifiable deadline or number specific to her situation. It largely rephrases existing information rather than adding new situation-specific quantifiable data."
+        }
+      }
+    },
+    {
+      "condition": "T4",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387778,
+      "line": "Three new states, three new payroll rulebooks \u2014 LogiTrans",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The prospect already knows LogiTrans is expanding into three new states, and the input mentions LogiTrans uses separate payroll processes across regions with prior HR discussions about reconciliation issues. The ACTUAL_OUTPUT ('Three new states, three new payroll rulebooks') merely combines and rephrases these already-known facts without introducing any new deadline, consequence, or specific number tied to the prospect's situation. It does not surface new information the prospect hadn't already worked out, so it fails the core requirement of the evaluation steps."
+        }
+      }
+    },
+    {
+      "condition": "T5",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387791,
+      "line": "Three new states \u2014 three more payroll processes for LogiTrans?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The output merely combines two facts already stated in the input \u2014 the three new states and LogiTrans's use of separate regional payroll processes \u2014 into a rhetorical question. It introduces no new deadline, consequence, or number beyond what the prospect already knows; the '3' is directly restated from the input rather than being a newly derived figure. Per the steps, this counts as rephrasing/generalizing existing information rather than surfacing new situation-relevant insight, warranting a low score."
+        }
+      }
+    },
+    {
+      "condition": "T5",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387803,
+      "line": "Three new states, one payroll process \u2014 before LogiTrans\u2019 regional teams multiply",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely restates existing facts from the input\u2014'three new states' and the existing separate payroll processes/regional teams issue\u2014without introducing any new deadline, consequence, or number. The phrase 'before LogiTrans' regional teams multiply' is a vague restatement of the known payroll fragmentation issue, not a new situation-specific insight. No new figures (e.g., 120 open roles) or concrete timelines are introduced, so it fails the requirement for genuinely new, relevant information."
+        }
+      }
+    },
+    {
+      "condition": "T5",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387814,
+      "line": "Three new states, three more payroll processes to reconcile?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The output merely rephrases facts already known: the three new states and the existing separate payroll processes/reconciliation issue are both explicitly stated in INPUT. It introduces no new concrete deadline, number, or consequence specific to her current situation\u2014only a rhetorical restatement combining two already-known facts. This fails the requirement for genuinely new, specific information."
+        }
+      }
+    },
+    {
+      "condition": "T5a",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387831,
+      "line": "Three new states \u2014 three more payroll processes to reconcile?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.1,
+          "success": false,
+          "reason": "The output merely combines and rephrases facts already stated in the input\u2014'three new states' and 'payroll processes' needing reconciliation are both directly given (LogiTrans expanding into three states; separate payroll processes across regions with prior discussion of reducing manual reconciliation). No new deadline, consequence, or number is introduced; it's a rhetorical restatement rather than new information about her current situation."
+        }
+      }
+    },
+    {
+      "condition": "T5a",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387842,
+      "line": "Three new states, one payroll process for LogiTrans?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely rephrases facts already known from the input (three new states, implied need for unified payroll due to regional reconciliation issues) without introducing any new deadline, number, or consequence specific to LogiTrans's current situation. It doesn't add the 120 open roles or any new situation-specific detail like a timeline or business impact, so it fails to meet the bar for new, non-redundant information."
+        }
+      }
+    },
+    {
+      "condition": "T5a",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387855,
+      "line": "Three new states, four payroll rulebooks \u2014 LogiTrans's multi-state setup",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.3,
+          "success": false,
+          "reason": "The output introduces a new figure ('four payroll rulebooks') that isn't found anywhere in the INPUT, which only mentions 'three new states' and separate payroll processes across regions, without specifying a rulebook count. This number appears fabricated rather than derived from the prospect's known facts, making it generic/unverified rather than a genuine situation-specific insight. It restates the 'three new states' fact and loosely ties to the payroll complexity theme, but does not clearly provide new, grounded information the prospect hasn't already inferred."
+        }
+      }
+    },
+    {
+      "condition": "T5b",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387866,
+      "line": "Three new states \u2014 does LogiTrans' payroll need three more regional processes?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely combines two facts already given in INPUT (three new states, separate regional payroll processes) into a rhetorical question. It introduces no new deadline, consequence, or number specific to the prospect's situation\u2014'three more regional processes' is inferred from existing input rather than new concrete data. This restates and rephrases known information rather than adding genuinely new situation-specific insight."
+        }
+      }
+    },
+    {
+      "condition": "T5b",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387876,
+      "line": "Three new states \u2014 three more payroll processes, or one?",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output only restates facts already present in the INPUT\u2014the three new states and the existing separate payroll processes across regions\u2014by turning them into a rhetorical question. It does not introduce any new deadline, consequence, or number specific to LogiTrans's situation (e.g., no new figure beyond 120 roles or 3 states, no new timeline or risk). Per the evaluation steps, since it merely rephrases known information without adding genuinely new situation-specific details, it should score low."
+        }
+      }
+    },
+    {
+      "condition": "T5b",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387886,
+      "line": "Three new states, four payroll processes? \u2014 LogiTrans expansion",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=None"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.5,
+          "success": false,
+          "reason": "The input describes LogiTrans expanding into three new states and mentions separate payroll processes across regions, but does not specify how many payroll processes exist. The output introduces a new number ('four payroll processes') that is not explicitly stated or clearly derivable from the input, making its relevance uncertain\u2014it could be a reasonable inference (assuming one prior region plus three new states) or an unfounded guess. This partially satisfies the requirement for new, situation-specific information, but the lack of clear grounding in the input reduces confidence that it's accurate rather than speculative."
+        }
+      }
+    },
+    {
+      "condition": "T7",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387919,
+      "line": "3 new states, 120 hires \u2014 one payroll run, not three more regional reconciliations",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 0.0,
+          "success": false,
+          "reason": "reproduces_experiment=False"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=True"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output merely restates numbers already given in the input (3 states, 120 hires) and reframes the payroll reconciliation issue that was already described in 'What I have been through.' It does not introduce a new deadline, consequence, or figure that the prospect hasn't already been told or implied to know; it's a rephrasing rather than new information."
+        }
+      }
+    },
+    {
+      "condition": "T7",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387959,
+      "line": "3 new states, 120 hires: payroll registration lands before hire #1 \u2014 one reconciliation cycle, not four",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=True"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.4,
+          "success": false,
+          "reason": "The output largely restates known facts (3 new states, 120 hires) already given in the INPUT. The only new element is 'one reconciliation cycle, not four,' but this number isn't clearly derivable from the INPUT (which never specifies four regions or cycles), making it feel like an unsupported or invented figure rather than a genuinely relevant, situation-specific insight. Since the response mostly rephrases prior known facts and adds a vague, unexplained number rather than concrete new context, it only partially satisfies the requirement for new, relevant information."
+        }
+      }
+    },
+    {
+      "condition": "T7",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790387994,
+      "line": "Three new states shouldn't mean three more payroll reconciliations",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 0.0,
+          "success": false,
+          "reason": "reproduces_experiment=False"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=True"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.2,
+          "success": false,
+          "reason": "The output references facts already known from the INPUT (three new states, payroll reconciliation issues) but does not introduce any new specific deadline, consequence, or number. It merely rephrases existing information into a punchy statement without adding new insight like a timeline, cost figure, or specific risk the prospect hasn't already considered."
+        }
+      }
+    },
+    {
+      "condition": "T7",
+      "prospect": "sunidhi",
+      "writer": "claude-fable-5-1",
+      "at": 1790388730,
+      "line": "Before LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile",
+      "success": false,
+      "metrics": {
+        "Reproduces the experiment": {
+          "score": 1.0,
+          "success": true,
+          "reason": "reproduces_experiment=True"
+        },
+        "Golden prompt": {
+          "score": 1.0,
+          "success": true,
+          "reason": "golden_prompt=True"
+        },
+        "Injection excluded": {
+          "score": 1.0,
+          "success": true,
+          "reason": "injection_excluded=True"
+        },
+        "Procedure adherence (T7)": {
+          "score": 1.0,
+          "success": true,
+          "reason": "procedure_adherence=True"
+        },
+        "Novelty (judged) [GEval]": {
+          "score": 0.3,
+          "success": false,
+          "reason": "The input already establishes the 3-state expansion and the payroll reconciliation issue. The output's 'first payroll in 3 new states' deadline and 'one process, not 3 more to reconcile' consequence are just a combination/restatement of the same '3 states' figure and the already-mentioned regional payroll reconciliation problem, not a new fact, deadline, or number outside what's derivable from INPUT. No new situation-specific data point (e.g., a real date, percentage, or cost) is introduced."
+        }
+      }
+    }
+  ]
+}
