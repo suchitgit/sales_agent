@@ -72,3 +72,14 @@ payroll reconciliations"* — procedure followed, proxy A.
 
 `make series2` (both writers; the T1 identical-sentence check), `make t7` + `make replay`, `make langsmith`,
 `make deepeval`. The independent verifier (`--verify`) has not been run on these lines.
+
+## Decisions, 26 Sep (Suchit)
+
+1. **Human verdict = the proxy verdict** for all 27 lines (review sheet filled accordingly). So on the human column:
+   T0–T5 are automation in 23 of 24 runs (T4 run 2 is intelligence: "Three new states — payroll compliance before the
+   first hire lands"); **T7 is intelligence in 1 of 3** (run 2, "before hire #1"), automation in 2 of 3.
+2. **Verifier wording:** keep v2's `reader_calibrated.json` — including its reworded R4 and the Indian-HR-English
+   persona — over the repo's 25 Sep wording (MIGRATION.md's "repo wins" read literally would have undone them).
+3. **Verifier knowledge:** B1 plus the CRM notes marked `her_experience` only (n2, n3); never n1, n6 or n11.
+4. **No server-side model fallback on Fable.** A refusal would otherwise be answered silently by another model inside
+   the experiment; a refusal or a cut-off stays in the run as data (`stop_reason` in the trace).
