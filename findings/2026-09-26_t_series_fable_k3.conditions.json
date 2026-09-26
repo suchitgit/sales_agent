@@ -1,0 +1,224 @@
+{
+  "kind": "sales.conditions.v1",
+  "prospect": "sunidhi",
+  "createdAt": 1790387994951,
+  "rows": [
+    {
+      "condition": "T0",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "Multi-state payroll compliance for LogiTrans \u2014 one platform, fewer manual checks",
+        "Multi-state payroll compliance for LogiTrans' growing driver workforce",
+        "Multi-state payroll compliance for LogiTrans' growing driver workforce"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.1,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T1",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "3 new states, 120 open roles \u2014 one payroll system, Sunidhi?",
+        "Three new states, 120 open roles \u2014 one payroll system for all of it",
+        "Three new states, 120 open roles \u2014 one payroll and compliance backbone for LogiTrans"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.29,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T2",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "Three new states, one payroll process \u2014 before the 120 hires land",
+        "Three new states, 120 open roles \u2014 one payroll process for all of them?",
+        "Three new states, 120 open roles \u2014 one payroll process instead of several?"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.28,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T3",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "Three new states, 120 open roles \u2014 one payroll process for all of it?",
+        "Three new states, 120 open roles \u2014 one payroll process?",
+        "Three new states, 120 hires, and separate payroll runs in each region"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.24,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T4",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "3 new states, 3 new payroll rulebooks \u2014 LogiTrans' compliance setup before the 120 hires land",
+        "Three new states \u2014 payroll compliance before the first hire lands",
+        "Three new states, three new payroll rulebooks \u2014 LogiTrans"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "INTELLIGENCE",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.29,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T5",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "Three new states \u2014 three more payroll processes for LogiTrans?",
+        "Three new states, one payroll process \u2014 before LogiTrans\u2019 regional teams multiply",
+        "Three new states, three more payroll processes to reconcile?"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.28,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T5a",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "Three new states \u2014 three more payroll processes to reconcile?",
+        "Three new states, one payroll process for LogiTrans?",
+        "Three new states, four payroll rulebooks \u2014 LogiTrans's multi-state setup"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.25,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T5b",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "Three new states \u2014 does LogiTrans' payroll need three more regional processes?",
+        "Three new states \u2014 three more payroll processes, or one?",
+        "Three new states, four payroll processes? \u2014 LogiTrans expansion"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "AUTOMATION",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 3,
+      "known_similarity_max": 0.25,
+      "procedure_adherence": [
+        null,
+        null,
+        null
+      ],
+      "golden_prompt": true
+    },
+    {
+      "condition": "T7",
+      "writer": "claude-fable-5-1",
+      "stub": false,
+      "k": 3,
+      "lines": [
+        "3 new states, 120 hires \u2014 one payroll run, not three more regional reconciliations",
+        "3 new states, 120 hires: payroll registration lands before hire #1 \u2014 one reconciliation cycle, not four",
+        "Three new states shouldn't mean three more payroll reconciliations"
+      ],
+      "verdicts": [
+        "AUTOMATION",
+        "INTELLIGENCE",
+        "AUTOMATION"
+      ],
+      "reproduces_experiment_passk": 1,
+      "known_similarity_max": 0.32,
+      "procedure_adherence": [
+        true,
+        true,
+        true
+      ],
+      "golden_prompt": true
+    }
+  ],
+  "rescored": true
+}
