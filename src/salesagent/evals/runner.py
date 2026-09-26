@@ -39,19 +39,46 @@ def run_conditions(prospect_id="sunidhi", conditions=None, k=1, writers=(1,)) ->
     try:
         for cid in conditions or ALL:
             for w in writers:
-                lines = []
-                for i in range(k):
-                    r = run_one(prospect_id, cid, w); lines.append(r["checks"])
-                rows.append({"condition": cid, "writer": config.MODEL_WRITER if w == 1 else config.MODEL_WRITER_2, "stub": config.USE_STUB, "k": k,
-                             "lines": [c["line"] for c in lines], "verdicts": [c["verdict_proxy"] for c in lines],
-                             "reproduces_experiment_passk": sum(c["reproduces_experiment"] for c in lines), "known_similarity_max": max(c["known_similarity"] for c in lines),
-                             "procedure_adherence": [c["procedure_adherence"] for c in lines], "golden_prompt": lines[0]["golden_prompt"]})
-        by = {}
-        for r in rows: by.setdefault(r["condition"], []).append(r)
-        for cid, rs in by.items():
-            if len(rs) > 1:
-                same = rs[0]["lines"][0] == rs[1]["lines"][0]
-                for r in rs: r["identical_across_writers"] = same
+                checks = [run_one(prospect_id, cid, w)["checks"] for _ in range(k)]
+                rows.append(table_row(cid, config.MODEL_WRITER if w == 1 else config.MODEL_WRITER_2, config.USE_STUB, checks))
+        mark_identical(rows)
     finally:
         config.SEND_APPROVAL_REQUIRED = prev
     return {"kind": "sales.conditions.v1", "prospect": prospect_id, "createdAt": int(time.time() * 1000), "rows": rows}
+
+
+def table_row(cid: str, writer: str, stub: bool, checks: list[dict]) -> dict:
+    """One row of the conditions table from the k runs' checks."""
+    return {"condition": cid, "writer": writer, "stub": stub, "k": len(checks),
+            "lines": [c["line"] for c in checks], "verdicts": [c["verdict_proxy"] for c in checks],
+            "reproduces_experiment_passk": sum(c["reproduces_experiment"] for c in checks), "known_similarity_max": max(c["known_similarity"] for c in checks),
+            "procedure_adherence": [c["procedure_adherence"] for c in checks], "golden_prompt": checks[0]["golden_prompt"]}
+
+
+def mark_identical(rows: list[dict]) -> None:
+    """The T1 finding: with two writers, does a condition produce the same line from both?"""
+    by = {}
+    for r in rows: by.setdefault(r["condition"], []).append(r)
+    for rs in by.values():
+        if len(rs) > 1:
+            same = rs[0]["lines"][0] == rs[1]["lines"][0]
+            for r in rs: r["identical_across_writers"] = same
+
+
+def print_table(res: dict) -> None:
+    print(f"{'COND':6} {'WRITER':22} {'VERDICT(proxy)':16} {'EXP?':5} {'KNOWN~':6} LINE")
+    for r in res["rows"]:
+        print(f"{r['condition']:6} {('replay-stub' if r['stub'] else r['writer']):22} {','.join(r['verdicts']):16} {r['reproduces_experiment_passk']}/{r['k']}  {r['known_similarity_max']:<6} {r['lines'][0][:80] if r['lines'][0] else '—'}"
+              + (f"   [identical across writers: {r['identical_across_writers']}]" if "identical_across_writers" in r else "")
+              + (f"   [procedure: {r['procedure_adherence']}]" if r['condition'] == 'T7' else ""))
+
+
+def save_table(res: dict) -> None:
+    """data/runs/conditions_latest.json and human_review.csv — the human verdict column is the final call."""
+    import csv
+    config.RUNS.mkdir(parents=True, exist_ok=True)
+    json.dump(res, open(config.RUNS / "conditions_latest.json", "w"), indent=2)
+    with open(config.RUNS / "human_review.csv", "w", newline="") as f:
+        wr = csv.writer(f); wr.writerow(["condition", "writer", "run", "line", "proxy_verdict", "HUMAN_VERDICT (automation/intelligence)", "HUMAN_NOTE"])
+        for r in res["rows"]:
+            for i, (l, v) in enumerate(zip(r["lines"], r["verdicts"])): wr.writerow([r["condition"], r["writer"], i + 1, l, v, "", ""])

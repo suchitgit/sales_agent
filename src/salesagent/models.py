@@ -70,6 +70,22 @@ def text_of(content) -> str:
     return content or ""
 
 
+_LABEL = re.compile(r"^(?:subject(?:\s+line)?|line)\s*:\s*", re.I)
+
+
+def extract_line(text) -> str | None:
+    """The subject line from a single-line answer. Models often add a label ('**Subject line:**'), markdown
+    (bold, '>' quotes) and a rationale below; the line is the first non-empty text once those are stripped."""
+    for raw in text_of(text).splitlines():
+        s = raw.strip().lstrip(">").strip()
+        s = re.sub(r"^[*_`]+|[*_`]+$", "", s).strip()          # **bold** / *italic* / `code` wrappers
+        s = _LABEL.sub("", s)                                  # 'Subject line:' / 'Subject:'
+        s = re.sub(r"^[*_`]+|[*_`]+$", "", s).strip().strip('"“”').strip()
+        if s:
+            return s
+    return None
+
+
 def parse_json(text) -> dict:
     text = re.sub(r"^```(?:json)?|```$", "", text_of(text).strip(), flags=re.M).strip()
     m = re.search(r"\{.*\}", text, flags=re.S)
