@@ -28,9 +28,15 @@ def run_one(prospect_id: str, condition_id: str, writer_which: int = 1, approve:
     except ImportError:
         out = app.invoke(inp, cfg)
         if "__interrupt__" in out: out = app.invoke(Command(resume={"approved": approve, "by": "runner"}), cfg)
-    out = dict(out); out["run_id"] = run_id; out["checks"] = score(out); out["at"] = int(time.time())
+    out = dict(out); out["run_id"] = run_id
+    return save_run(out)
+
+
+def save_run(out: dict) -> dict:
+    """Score a finished run and save it to data/runs — the series, run_one.py and the replay all read these files."""
+    out["checks"] = score(out); out["at"] = int(time.time())
     config.RUNS.mkdir(parents=True, exist_ok=True)
-    json.dump(out, open(config.RUNS / f"{int(time.time()*1000)}_{condition_id}_{prospect_id}_w{writer_which}.json", "w"), indent=2, default=str)
+    json.dump(out, open(config.RUNS / f"{int(time.time()*1000)}_{out['condition_id']}_{out['prospect_id']}_w{out.get('writer_which', 1)}.json", "w"), indent=2, default=str)
     return out
 
 def run_conditions(prospect_id="sunidhi", conditions=None, k=1, writers=(1,)) -> dict:
