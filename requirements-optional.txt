@@ -1,6 +1,2 @@
-# Installed only when the build reaches the item that needs them (ask first — CLAUDE.md).
-langchain-voyageai      # vector retrieval through the Voyage embeddings API (never a local model)
-faker                   # build item 5 — synthetic prospect generator
-fastapi                 # build item 6 — the API layer
-uvicorn[standard]       # build item 6
-deepeval                # richer eval reporting, optional
+langgraph-checkpoint-postgres     # durable approval across restarts (needs Docker Postgres)
+psycopg[binary]

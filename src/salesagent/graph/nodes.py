@@ -1,158 +1,99 @@
-"""The spine, node by node. Code owns the order. The model is called at exactly two points:
-generate (once) and score (once per check). Every node appends to the trace as it runs."""
+"""fetch → assemble(condition) → write → verify → approve → send.
+The orchestrator's job is to assemble exactly the condition's blocks from the source systems. The WRITER
+does the rest; code only verifies the writer followed the procedure."""
 from __future__ import annotations
-import json
-from langchain_core.messages import HumanMessage, SystemMessage
-from langgraph.store.base import BaseStore
+import json, time
+from langchain_core.messages import HumanMessage
 from .. import config
-from ..models import get_model, parse_json
-from ..stores.context import get_context
-from ..stores.retrieval import Retrieval
-from ..stores.memory import load_cases, past_decisions, rep_profile
-from ..stores.graph import get_graph
+from ..blocks import fetch_all, build, assemble as assemble_prompt, golden
+from ..models import get_writer, parse_json, usage
 from ..guards.approval import request_approval
 from ..guards.idempotency import send_key, send_once
 
-_ret, _kg = Retrieval(), get_graph()
-T = lambda step, detail, actor="code", label="READ": {"step": step, "detail": detail, "actor": actor, "label": label}
+CONDITIONS = {c["id"]: c for c in json.load(open(config.EXPERIMENT / "conditions.json"))["conditions"]}
+T = lambda step, detail, actor="code", ms=0.0: {"step": step, "detail": detail, "actor": actor, "ms": ms}
 
 
-def plan(state):
-    steps = [s["id"] for s in _kg.seller_trace()]
-    return {"plan": steps, "trace": [T("plan", "S1–S5 loaded from the knowledge graph as a constant; the model decides nothing here")]}
-
-
-def fetch(state, *, store: BaseStore = None):
-    on = state.get("stores_on") or {"context": True, "retrieval": True, "memory": True, "kg": True}
-    ctx = get_context(state["prospect_id"])
-    if not on["context"]:
-        ctx = {**ctx, "trigger": None, "facts": [], "has_live_trigger": True, "new_states": ctx["new_states"], "open_roles": ctx["open_roles"]}
-    triggers = []
-    if ctx["has_live_trigger"]:
-        if ctx["new_states"]: triggers.append("new states")
-        if ctx["open_roles"] >= 50: triggers.append("open roles")
-        if "depot" in (ctx["trigger"] or "").lower(): triggers.append("new depots")
-    pains = _kg.pains_for(triggers)
-    query = " ".join([p["pain"] for p in pains] + ["payroll", "reconciliation", "onboarding"])
-    retrieved = _ret.search(query, state["prospect_id"]) if on["retrieval"] else []
-    flagged = [r for r in retrieved if r["flagged"]]
-    history = _ret.her_experiences(state["prospect_id"])  # for the reader: she knows her past whatever the writer is given
-    all_cases, cases_from = load_cases()
-    mem = {"cases": past_decisions([p["pain"] for p in pains], all_cases), "rep": rep_profile(store, state.get("rep_id", "rep-suchit"))}
-    kg = {"pains": pains if on["kg"] else [], "archetype": _kg.top_archetype(ctx["prospect"]["role"], ctx["prospect"]["industry"]) if on["kg"] else {"label": "none", "id": "none"},
-          "rules": _kg.rules if on["kg"] else [], "reader": _kg.reader_trace()}
-    if not on["memory"]:
-        mem = {"cases": [], "rep": {"habits": []}}
-    tr = [T("fetch · context", f"trigger={'none' if not ctx['has_live_trigger'] else ctx['trigger']} · roles={ctx['open_roles']}"),
-          T("fetch · retrieval", f"{len(retrieved) - len(flagged)} dormant facts" + (f" · {len(flagged)} note(s) flagged as instruction-like: {', '.join(f['id'] for f in flagged)} — kept as data, excluded from the prompt" if flagged else "")
-                                  + (f" · her own experience, for the reader: {', '.join(h['id'] for h in history)}" if history else "")),
-          T("fetch · memory", f"{len(mem['cases'])} past decisions with outcomes, from {cases_from} · rep habits loaded"),
-          T("fetch · knowledge graph", f"{len(pains)} trigger→pain mappings, from {_kg.source} · archetype: {kg['archetype']['label']}")]
-    return {"context": ctx, "retrieved": retrieved, "her_history": history, "memory": mem, "kg": kg, "trace": tr}
-
-
-def known_to_her(state) -> str:
-    """What the reader, playing her, already knows: this week's trigger and facts, and what she has been through
-    (CRM notes marked her_experience). R4 asks about a pain she has lived; without her history it cannot be judged."""
-    ctx = state["context"]
-    now = " ".join(filter(None, [ctx.get("trigger"), *ctx.get("facts", [])])) or "nothing is happening"
-    lived = " | ".join(h["text"] for h in state.get("her_history", []))
-    return now + (f" || What she has been through: {lived}" if lived else "")
-
-
-def _cut(text: str, budget: int) -> str:
-    return text if len(text) <= budget else text[: max(0, budget - 1)].rstrip() + "…"
+def fetch(state):
+    f = fetch_all(state["prospect_id"])
+    notes = f["notes"]["data"]
+    summary = {
+        "account": {"system": f["account"]["system"], "ms": f["account"]["ms"], "returned": f"{f['account']['data']['account']['name']} · {f['account']['data']['account']['role']}"},
+        "post": {"system": f["post"]["system"], "ms": f["post"]["ms"], "returned": (f["post"]["data"] or {}).get("text", "no live post")},
+        "jobs": {"system": f["jobs"]["system"], "ms": f["jobs"]["ms"], "returned": f"{f['jobs']['data']['open_roles']} open roles"},
+        "notes": {"system": f["notes"]["system"], "ms": f["notes"]["ms"], "returned": f"{len(notes['notes'])} notes" + (f" · flagged and excluded: {', '.join(n['id'] for n in notes['flagged'])}" if notes["flagged"] else "")},
+        "cases": {"system": f["cases"]["system"], "ms": f["cases"]["ms"], "returned": f"{len(f['cases']['data']['cases'])} past decisions"},
+        "judgement": {"system": f["judgement"]["system"], "ms": f["judgement"]["ms"], "returned": f"{len(f['judgement']['data']['rules'])} rules"},
+        "traces": {"system": f["traces"]["system"], "ms": f["traces"]["ms"], "returned": "reader R1–R6 · seller S1–S5 · task"},
+    }
+    blocks = build(f)
+    tr = [T(f"fetch · {v['system']}", v["returned"], ms=v["ms"]) for v in summary.values()]
+    tr.append(T("derive · B3", "signals computed from feed + jobs + notes (no source system)"))
+    return {"fetch": summary, "blocks": blocks, "declined": not f["post"]["data"], "trace": tr}
 
 
 def assemble(state):
-    """Hands the model MATERIAL only — facts, mappings, rules, the archetype. Never the answer.
-    The deadline is the model's to compute from her numbers; that is the R3 test. Each store's text is
-    cut to its share of the character budget (config.PROPORTION), so the proportion is enforced."""
-    ctx, kg = state["context"], state["kg"]
-    if not ctx["has_live_trigger"]:
-        return {"prompt": "", "declined": True, "trace": [T("assemble", "No live trigger inside the freshness window — the agent declines to write")]}
-    B = config.PROMPT_BUDGET_CHARS
-    on = state.get("stores_on") or {"context": True, "retrieval": True, "memory": True, "kg": True}
-    sections = {}
-    # basic (T0) is not a store and not a toggle: who she is and what we sell always reach the prompt
-    basic = "\n".join([f"company: {ctx['prospect']['company']}", f"prospect: {ctx['prospect']['name']}, {ctx['prospect']['role']}, {ctx['prospect']['industry']}",
-                        "seller: HumanAITech — multi-state statutory compliance, payroll consolidation, onboarding at scale"])
-    sections["context"] = "\n".join([f"trigger: {ctx['trigger']}", f"facts: {' | '.join(ctx['facts'])}", f"new_states: {ctx['new_states']}", f"open_roles: {ctx['open_roles']}"]) if on["context"] else ""
-    facts = [r["text"] for r in state["retrieved"] if not r["flagged"]]
-    sections["retrieval"] = ("dormant: " + " | ".join(facts)) if (on["retrieval"] and facts) else ""
-    cases = state["memory"]["cases"]
-    sections["memory"] = ("past decisions: " + " | ".join(f"{c['id']} {c['context']} → {c['pain']} → {c['outcome']}" for c in cases) + f"\nrep habits: {', '.join(state['memory']['rep']['habits'])}") if on["memory"] else ""
-    sections["kg"] = ("\n".join([f"trigger→pain: " + " | ".join(f"{m['trigger']} → {m['pain']} (priority {m['priority']})" for m in kg["pains"]),
-                                 f"archetype that earns the read from {ctx['prospect']['role']} in {ctx['prospect']['industry']}: {kg['archetype']['label']}",
-                                 "judgement: " + " ".join(kg["rules"][:3])])) if on["kg"] else ""
-    cut = {k: _cut(v, int(B * config.PROPORTION[k])) for k, v in sections.items()}
-    prompt = "\n".join([basic] + [v for v in cut.values() if v])
-    used = {k: len(v) for k, v in cut.items()}
-    return {"prompt": prompt, "declined": False,
-            "trace": [T("assemble", f"material only, no deadline supplied · budget {B} chars · used {used} · derived signals excluded as inert")]}
-
-
-def generate(state):
+    cond = CONDITIONS[state["condition_id"]]
     if state.get("declined"):
-        return {"candidates": []}
-    llm = get_model("medium")
-    msgs = [SystemMessage(content="You write subject lines for a salesperson. Reply with JSON only: {\"candidates\": [three strings]}."),
-            HumanMessage(content="TASK: write three candidate subject lines for this prospect, from these facts only. Do not repeat her own news back to her. If her numbers imply a deadline she has not stated, you may compute it and use it.\n" + state["prompt"])]
-    out = parse_json(llm.invoke(msgs).content)
-    cands = [{"id": chr(65 + i), "text": c, "results": [], "died_at": None, "reason": None} for i, c in enumerate(out["candidates"][:3])]
-    return {"candidates": cands, "trace": [T("generate", f"model call 1 → {len(cands)} candidates", actor="model", label="HYPOTHESIS")]}
+        return {"prompt": "", "spans": [], "golden": {}, "trace": [T("assemble", "no live trigger — nothing to write; the agent declines")]}
+    prompt, spans = assemble_prompt(state["blocks"], cond)
+    g = golden(state["blocks"]) if state["prospect_id"] == "sunidhi" else {}
+    used = [b for b in cond["blocks"]]
+    gtxt = ("golden match: " + ", ".join(f"{b} {'✓' if g.get(b if b != 'B5a' else 'B5', True) else '✗'}" for b in used)) if g else "no experiment reference for this prospect"
+    return {"prompt": prompt, "spans": spans, "golden": g,
+            "trace": [T("assemble", f"condition {cond['id']} · blocks {' + '.join(used)} · {len(prompt)} chars, no truncation · {gtxt}")]}
 
 
-def score(state):
+def write(state):
     if state.get("declined"):
-        return {"winner": None}
-    on = state.get("stores_on") or {"kg": True}
-    if not on.get("kg", True):
-        # the six checks live in the knowledge graph; without it there is nothing to score against —
-        # the best-informed candidate ships as written. This is T0–T5: a line, unscored, automation.
-        cands = [dict(c, results=[], died_at=None, reason=None) for c in state["candidates"]]
-        w = cands[-1] if cands else None
-        return {"candidates": cands, "winner": w,
-                "trace": [T("score", "no reader trace available (knowledge graph off) — best-informed candidate taken as written, unscored", label="HYPOTHESIS"),
-                          T("select", f"unscored: \u201c{w['text']}\u201d" if w else "nothing to select", label="HYPOTHESIS")]}
-    llm = get_model("small")
-    known = known_to_her(state)
-    reader = state["kg"]["reader"]
-    cands, tr, winner = [], [], None
-    for c in state["candidates"]:
-        c = dict(c); c["results"] = []
-        for chk in reader:  # in order; break at first failure — the loop is code
-            msgs = [SystemMessage(content="You are the prospect reading a subject line in two seconds. Reply with JSON only: {\"pass\": true|false, \"reason\": \"...\"}."),
-                    HumanMessage(content=f"CHECK: {chk['id']} — {chk['q']} (fails if: {chk['kill']})\nCANDIDATE: {c['text']}\nKNOWN_TO_HER: {known}")]
-            v = parse_json(llm.invoke(msgs).content)
-            c["results"].append({"id": chk["id"], "pass": bool(v["pass"]), "reason": v.get("reason", "")})
-            if not v["pass"]:
-                c["died_at"], c["reason"] = chk["id"], v.get("reason", "")
-                tr.append(T(f"score {c['id']} · rejected at {chk['id']}", f"\u201c{c['text']}\u201d — {c['reason']}", actor="model", label="HYPOTHESIS"))
-                break
-        else:
-            tr.append(T(f"score {c['id']} · clears all six", f"\u201c{c['text']}\u201d", actor="model", label="HYPOTHESIS"))
-            if winner is None:
-                winner = c
-        cands.append(c)
-    tr.append(T("select", f"survivor: \u201c{winner['text']}\u201d" if winner else "no candidate cleared all six", label="HYPOTHESIS"))
-    return {"candidates": cands, "winner": winner, "trace": tr}
+        return {}
+    cid = state["condition_id"]; w = get_writer(cid, state.get("writer_which", 1))
+    t = time.perf_counter(); msg = w.invoke([HumanMessage(content=state["prompt"])]); ms = round((time.perf_counter() - t) * 1000, 1)
+    u = usage(msg); model = getattr(w, "model", None) or getattr(w, "model_name", None) or u.get("model")
+    out = {"raw": msg.content, "usage": {**u, "model": model}, "write_ms": ms}
+    if CONDITIONS[cid]["mode"] == "single":
+        line = msg.content.strip().strip('"').splitlines()[0].strip().strip('"')
+        out.update(line=line, trace=[T("write", f"{model} → “{line}”", actor="model", ms=ms)])
+    else:
+        try:
+            j = parse_json(msg.content)
+            out.update(candidates=j.get("candidates", []), seller=j.get("seller", {}), survivor=j.get("survivor"))
+            out["trace"] = [T("write · procedure", f"{model} ran S1–S5, wrote {len(out['candidates'])} candidates, scored R1–R6, chose “{out['survivor']}”", actor="model", ms=ms)]
+        except Exception as e:  # noqa: BLE001
+            out.update(candidates=[], survivor=None, trace=[T("write · procedure", f"{model} output was not valid JSON ({type(e).__name__}) — recorded as a procedure failure", actor="model", ms=ms)])
+    return out
+
+
+def verify(state):
+    """Code checks the writer's own procedure — it does not re-judge the line."""
+    if state.get("declined") or CONDITIONS[state["condition_id"]]["mode"] != "procedure":
+        return {}
+    cands, surv, issues = state.get("candidates", []), state.get("survivor"), []
+    if len(cands) != 3: issues.append(f"{len(cands)} candidates, expected 3")
+    for c in cands:
+        ids = [x.get("id") for x in c.get("checks", [])]
+        if ids != [f"R{i}" for i in range(1, len(ids) + 1)]: issues.append(f"“{c.get('text','')[:30]}…” checks out of order: {ids}")
+        fails = [x for x in c.get("checks", []) if not x.get("pass")]
+        if fails and c.get("checks", [])[-1] is not fails[0]: issues.append(f"“{c.get('text','')[:30]}…” did not stop at its first failure")
+        if fails and c.get("died_at") != fails[0].get("id"): issues.append(f"“{c.get('text','')[:30]}…” died_at does not match its first failure")
+    surv_c = next((c for c in cands if c.get("text") == surv), None)
+    if not surv_c: issues.append("survivor is not one of the candidates")
+    elif len(surv_c.get("checks", [])) != 6 or not all(x.get("pass") for x in surv_c["checks"]): issues.append("survivor did not pass all six")
+    v = {"adherence": not issues, "issues": issues, "killed": [(c.get("text"), c.get("died_at")) for c in cands if c.get("died_at")]}
+    return {"verification": v, "trace": [T("verify", "procedure followed: checks in order, stopped at first failure, survivor all-pass" if not issues else "procedure issues: " + "; ".join(issues))]}
 
 
 def approve(state):
-    if state.get("declined") or not state.get("winner"):
-        return {"approval": {"approved": False, "skipped": True}}
-    if not config.SEND_APPROVAL_REQUIRED:
-        return {"approval": {"approved": True, "auto": True}}
-    decision = request_approval({"line": state["winner"]["text"],
-                                 "rejected": [{"id": c["id"], "text": c["text"], "died_at": c["died_at"], "reason": c["reason"]} for c in state["candidates"] if c["died_at"]]})
-    return {"approval": decision, "trace": [T("approve", f"rep decision: {decision}", actor="human", label="READ")]}
+    ok_to_send = state.get("survivor") and state.get("verification", {}).get("adherence")
+    if state.get("declined") or not ok_to_send or not config.SEND_APPROVAL_REQUIRED:
+        return {"approval": {"approved": bool(ok_to_send) and not config.SEND_APPROVAL_REQUIRED, "skipped": not ok_to_send}}
+    d = request_approval({"line": state["survivor"], "rejected": [{"text": t, "died_at": d} for t, d in state["verification"]["killed"]]})
+    return {"approval": d, "trace": [T("approve", f"rep decision: {d}", actor="human")]}
 
 
 def send(state):
     if not state.get("approval", {}).get("approved"):
-        return {"sent": {"status": "not_sent"}, "label": "DECLINED" if state.get("declined") else "NOT_APPROVED",
-                "trace": [T("send", "nothing left the system")]}
-    key = send_key(state.get("thread_id", "t"), state["winner"]["text"])
-    result = send_once(key, lambda: {"to": state["context"]["prospect"]["name"], "line": state["winner"]["text"]})
-    return {"sent": result, "label": "HYPOTHESIS", "trace": [T("send", f"{result['status']} · key {key} · label HYPOTHESIS until the outcome returns")]}
+        return {"sent": {"status": "not_sent"}, "trace": [T("send", "nothing left the system")]}
+    key = send_key(state.get("thread_id", "t"), state["survivor"])
+    r = send_once(key, lambda: {"line": state["survivor"]})
+    return {"sent": r, "trace": [T("send", f"{r['status']} · key {key} · label HYPOTHESIS until the outcome returns")]}

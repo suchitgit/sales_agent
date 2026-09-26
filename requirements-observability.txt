@@ -1,2 +1,2 @@
-deepeval>=4.2
-langsmith>=0.14
+langsmith>=0.14                   # tracing + experiments
+deepeval>=4.2                     # metrics; judge is Anthropic-backed (evals/judge.py)

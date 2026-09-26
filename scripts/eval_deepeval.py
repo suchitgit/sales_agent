@@ -1,35 +1,32 @@
-"""Run the spine on every seed prospect k times and score each run with the DeepEval metrics.
-Deterministic metrics always run; the judged novelty metric runs only with an API key and --judge.
-Usage: python scripts/eval_deepeval.py [k] [--judge]
-Results also land in LangSmith when tracing is on."""
-import sys, json, time
+"""DeepEval over the latest conditions table: deterministic metrics from the saved runs, plus an optional
+judged novelty metric (Anthropic-backed; never OpenAI). Usage: python scripts/eval_deepeval.py [--judge]"""
+import sys, json, glob
 sys.path.insert(0, "src")
-from salesagent.evals import tracing; tracing.enable()
 from salesagent import config
-from salesagent.evals.suite import run_once
-from salesagent.stores.context import load_prospects
-from salesagent.evals.deepeval_metrics import DETERMINISTIC, novelty_geval, case_from_run
 from deepeval import evaluate
+from deepeval.metrics import BaseMetric, GEval
+from deepeval.test_case import LLMTestCase, SingleTurnParams
 
-k = int(sys.argv[1]) if len(sys.argv) > 1 and sys.argv[1].isdigit() else 3
-use_judge = "--judge" in sys.argv and not config.USE_STUB
-metrics = [m() for m in DETERMINISTIC]
-if use_judge:
-    from salesagent.evals.judge import AnthropicJudge
-    metrics.append(novelty_geval(AnthropicJudge()))
-print(f"tracing: {tracing.status()} · model: {'STUB' if config.USE_STUB else config.MODEL_MEDIUM} · judge: {'on' if use_judge else 'off'}")
+class Flag(BaseMetric):
+    def __init__(self, key, label): self.key, self.label, self.threshold = key, label, 1.0
+    @property
+    def __name__(self): return self.label
+    def measure(self, tc, *a, **k):
+        v = tc.metadata["checks"].get(self.key)
+        self.score = 1.0 if v in (True, None) else (v if isinstance(v, float) else 0.0); self.success = self.score >= self.threshold
+        self.reason = f"{self.key}={v}"; return self.score
+    async def a_measure(self, tc, *a, **k): return self.measure(tc)
+    def is_successful(self): return bool(self.success)
 
+runs = [json.load(open(f)) for f in sorted(glob.glob(str(config.RUNS / "*_T*_*.json")))]
 cases = []
-for pid, p in load_prospects().items():
-    for i in range(k):
-        run = run_once(pid, f"de-{pid}-{i}")
-        tc = case_from_run(p, run); tc.name = f"{pid}#{i}"
-        cases.append(tc)
-res = evaluate(test_cases=cases, metrics=metrics)
-# a flat summary the site and the deck can use
-summary = {"kind": "sales.deepeval.v1", "k": k, "createdAt": int(time.time() * 1000), "judge": use_judge, "rows": []}
-for tr in res.test_results:
-    summary["rows"].append({"case": tr.name, "success": tr.success,
-                            "metrics": [{"name": m.name, "score": m.score, "success": m.success, "reason": m.reason} for m in (tr.metrics_data or [])]})
-out = "data/synthetic/deepeval.json"; json.dump(summary, open(out, "w"), indent=2)
-print(f"\n{sum(r['success'] for r in summary['rows'])}/{len(summary['rows'])} cases passed all metrics · exported {out}")
+for r in runs:
+    line = r["checks"]["line"] or "(declined)"
+    tc = LLMTestCase(input=f"What she already knows: {r['blocks'].get('B1','')}", actual_output=line, metadata={"checks": r["checks"]})
+    tc.name = f"{r['condition_id']}·{r['prospect_id']}"; cases.append(tc)
+metrics = [Flag("reproduces_experiment", "Reproduces the experiment"), Flag("golden_prompt", "Golden prompt"), Flag("injection_excluded", "Injection excluded"), Flag("procedure_adherence", "Procedure adherence (T7)")]
+if "--judge" in sys.argv and not config.USE_STUB:
+    from salesagent.evals.judge import AnthropicJudge
+    metrics.append(GEval(name="Novelty (judged)", criteria="INPUT is what the prospect already knows. Score high only if ACTUAL_OUTPUT adds a deadline, consequence or number she has not worked out, about her situation now.",
+                         evaluation_params=[SingleTurnParams.INPUT, SingleTurnParams.ACTUAL_OUTPUT], model=AnthropicJudge(), threshold=0.7))
+evaluate(test_cases=cases, metrics=metrics)

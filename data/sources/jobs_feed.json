@@ -1,0 +1,17 @@
+{
+  "_system": "Jobs feed \u00b7 public job postings",
+  "companies": [
+    {
+      "company": "LogiTrans",
+      "open_roles": 120
+    },
+    {
+      "company": "Sunrise Logistics",
+      "open_roles": 60
+    },
+    {
+      "company": "Steady Freight",
+      "open_roles": 4
+    }
+  ]
+}

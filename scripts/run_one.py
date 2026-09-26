@@ -1,42 +1,31 @@
-"""Run one prospect through the spine. Pauses for approval; --auto approves for you.
-Usage: python scripts/run_one.py sunidhi [--auto] [--export out.json]"""
+"""One run, full path including the approval pause. Usage:
+  python scripts/run_one.py [prospect] [condition] [--writer 2] [--auto] [--verify]
+  default: sunidhi T7"""
 import sys, json
 sys.path.insert(0, "src")
 from langgraph.checkpoint.memory import InMemorySaver
-from langgraph.store.memory import InMemoryStore
 from langgraph.types import Command
 from salesagent import config
 from salesagent.graph.spine import build
-from salesagent.stores.context import load_prospects
-from salesagent.evals.suite import export_trace
-
-pid = sys.argv[1] if len(sys.argv) > 1 else "sunidhi"
-auto = "--auto" in sys.argv
-checkpointer, store = InMemorySaver(), InMemoryStore()
-persistence = "in-memory"
-if config.POSTGRES_URI:
-    try:
-        from langgraph.checkpoint.postgres import PostgresSaver
-        from langgraph.store.postgres import PostgresStore
-        cp_ctx, st_ctx = PostgresSaver.from_conn_string(config.POSTGRES_URI), PostgresStore.from_conn_string(config.POSTGRES_URI)
-        checkpointer, store = cp_ctx.__enter__(), st_ctx.__enter__()
-        checkpointer.setup(); store.setup(); persistence = "postgres"
-    except Exception as e:  # noqa: BLE001
-        print(f"postgres configured but unreachable ({type(e).__name__}) — falling back to in-memory persistence")
-        checkpointer, store = InMemorySaver(), InMemoryStore()
-app = build(checkpointer=checkpointer, store=store)
-cfg = {"configurable": {"thread_id": f"run-{pid}"}}
-print(f"model: {'STUB (no ANTHROPIC_API_KEY)' if config.USE_STUB else config.MODEL_MEDIUM + ' / ' + config.MODEL_SMALL} · persistence: {persistence}")
-out = app.invoke({"prospect_id": pid, "rep_id": "rep-suchit", "thread_id": f"run-{pid}"}, cfg)
+from salesagent.evals import tracing
+from salesagent.evals.checks import score
+args = [a for a in sys.argv[1:] if not a.startswith("--")]
+pid = args[0] if args else "sunidhi"; cid = args[1] if len(args) > 1 else "T7"
+w = int(sys.argv[sys.argv.index("--writer") + 1]) if "--writer" in sys.argv else 1
+tracing.enable()
+app = build(checkpointer=InMemorySaver()); cfg = {"configurable": {"thread_id": f"one-{cid}-{pid}"}, "tags": [cid], "metadata": {"condition": cid}}
+print(f"writer: {'REPLAY STUB (no key) — recorded experiment output' if config.USE_STUB else (config.MODEL_WRITER if w == 1 else config.MODEL_WRITER_2)} · condition {cid} · tracing {tracing.status()}")
+out = app.invoke({"prospect_id": pid, "condition_id": cid, "writer_which": w, "thread_id": f"one-{cid}-{pid}", "query": f"Write a subject line for {pid}"}, cfg)
 if "__interrupt__" in out:
-    payload = out["__interrupt__"][0].value
-    print("\n=== APPROVAL NEEDED ===\nline:", payload["line"])
-    for r in payload["rejected"]: print(f"  rejected {r['id']} at {r['died_at']}: {r['text']} — {r['reason']}")
-    ans = "y" if auto else input("approve? [y/N] ")
-    out = app.invoke(Command(resume={"approved": ans.lower().startswith("y"), "by": "rep"}), cfg)
+    p = out["__interrupt__"][0].value
+    print("\n=== APPROVAL NEEDED ===\nline:", p["line"]); [print(f"  rejected at {r['died_at']}: {r['text']}") for r in p["rejected"]]
+    ok = True if "--auto" in sys.argv else input("approve? [y/N] ").lower().startswith("y")
+    out = app.invoke(Command(resume={"approved": ok, "by": "rep"}), cfg)
+out = dict(out)
+if "--verify" in sys.argv and (out.get("survivor") or out.get("line")):
+    from salesagent.evals.verifier import verify_line
+    b = out["blocks"]; out["verifier"] = verify_line(out.get("survivor") or out.get("line"), b["B1"] + "\n" + b["B2"])
 print("\n=== TRACE ===")
-for s in out["trace"]: print(f"  [{s['actor']:5}] {s['step']:32} {s['detail']}  ({s['label']})")
-print("\nlabel:", out.get("label"), "| sent:", out.get("sent"))
-if "--export" in sys.argv:
-    path = sys.argv[sys.argv.index("--export") + 1]
-    json.dump(export_trace(out, load_prospects()[pid]), open(path, "w"), indent=2); print("exported", path)
+for s in out["trace"]: print(f"  [{s['actor']:5}] {s['step']:38} {s['detail'][:150]}  {s['ms']} ms")
+print("\n=== CHECKS ===", json.dumps(score(out), indent=1))
+if out.get("verifier"): print("=== VERIFIER (calibrated reader, all six) ===", [(v["id"], v["pass"]) for v in out["verifier"]])

@@ -1,0 +1,31 @@
+{
+  "_system": "Knowledge graph \u00b7 calibrated reader wording (verifier only, from reader calibration 25 Sep)",
+  "_note": "Used ONLY by the independent reader verifier. The T7 writer receives the experiment's verbatim traces (traces.json).",
+  "reader": [
+    {
+      "id": "R1",
+      "q": "Is this about my situation now? It passes if it refers to what is happening or coming next. It fails only if it is about something already over \u2014 stale news."
+    },
+    {
+      "id": "R2",
+      "q": "Does it need me now \u2014 is there a clock?"
+    },
+    {
+      "id": "R3",
+      "q": "Is there something here I had not already worked out? The line may mention what I know. It passes if it adds one thing I have not computed \u2014 a deadline, a consequence, a number that follows from my situation. It fails only if everything in it is already known to me."
+    },
+    {
+      "id": "R4",
+      "q": "Does it name a pain I'd recognise as mine \u2014 something I've been through or am about to go through? It may reframe my situation in new words. It fails only if the pain is the seller's, not mine, or if it uses vendor vocabulary: product names, 'solution', 'platform'."
+    },
+    {
+      "id": "R5",
+      "q": "Is there an upside, or only a warning?"
+    },
+    {
+      "id": "R6",
+      "q": "Does this land on me, or on someone else?"
+    }
+  ],
+  "reader_persona": "She is an Indian HR leader; standard Indian HR English ('joiner', 'CTC', 'payroll run') is her own vocabulary."
+}

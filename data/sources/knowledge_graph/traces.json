@@ -1,0 +1,54 @@
+{
+  "_system": "Knowledge graph \u00b7 decision traces (procedure)",
+  "reader_title": "READER \u2014 how Sunidhi decides, in order, stopping at the first failure",
+  "reader": [
+    {
+      "id": "R1",
+      "q": "Is this about my situation now?"
+    },
+    {
+      "id": "R2",
+      "q": "Does it need me now \u2014 is there a clock?"
+    },
+    {
+      "id": "R3",
+      "q": "Is there something I had not already thought of? A fact I already know earns nothing."
+    },
+    {
+      "id": "R4",
+      "q": "Does it name a pain I have been through, in my words?"
+    },
+    {
+      "id": "R5",
+      "q": "Is there an upside, or only a warning?"
+    },
+    {
+      "id": "R6",
+      "q": "Does this land on me, or on someone else?"
+    }
+  ],
+  "seller_title": "SELLER \u2014 how the 5% decide what to lead with",
+  "seller": [
+    {
+      "id": "S1",
+      "q": "Which capability touches what she deals with now or within a quarter?"
+    },
+    {
+      "id": "S2",
+      "q": "Which of HER goals does it move?"
+    },
+    {
+      "id": "S3",
+      "q": "Where do we have evidence?"
+    },
+    {
+      "id": "S4",
+      "q": "What job would she hire us for \u2014 her progress, never our product?"
+    },
+    {
+      "id": "S5",
+      "q": "Of the survivors, which scores highest against the reader's trace?"
+    }
+  ],
+  "task": "Run S1\u2013S5 \u2192 three candidates. Score each against R1\u2013R6 in order; stop at the first failure and name it. Choose the survivor. Write its subject line."
+}

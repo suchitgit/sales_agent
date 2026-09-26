@@ -1,0 +1,22 @@
+{
+  "_system": "Social feed \u00b7 public posts",
+  "posts": [
+    {
+      "prospect": "sunidhi",
+      "author": "Sunidhi",
+      "company": "LogiTrans",
+      "text": "LogiTrans is expanding into three new states.",
+      "age_days": 6,
+      "new_states": 3
+    },
+    {
+      "prospect": "arun",
+      "author": "Arun",
+      "company": "Sunrise Logistics",
+      "text": "Sunrise Logistics opened three new depots this quarter.",
+      "age_days": 12,
+      "new_states": 0,
+      "new_sites": 3
+    }
+  ]
+}

@@ -1,0 +1,30 @@
+{
+  "B0": {
+    "title": "B0 \u00b7 BASIC \u2014 who she is, what we sell",
+    "text": "PROSPECT\nName: Sunidhi Rao \u00b7 Role: VP HR\nCompany: LogiTrans \u00b7 Mid-size logistics company\n\nSELLER\nCompany: HumanAITech\nProvides: payroll and HR platform \u00b7 multi-state\nstatutory compliance \u00b7 payroll consolidation \u00b7\nonboarding at scale"
+  },
+  "B1": {
+    "title": "B1 \u00b7 CURRENT CONTEXT \u2014 volatile, this week",
+    "text": "Last week, Sunidhi posted that LogiTrans is\nexpanding into three new states.\n\nLogiTrans currently has 120 open roles."
+  },
+  "B2": {
+    "title": "B2 \u00b7 DORMANT DATA \u2014 private, already held",
+    "text": "1. Eight months ago, a LogiTrans HR operations manager\n   attended a HumanAITech webinar on multi-state\n   payroll compliance.\n2. LogiTrans uses separate payroll processes across\n   different operating regions.\n3. HR previously discussed reducing manual reconciliation\n   between regional payroll teams.\n4. A previous employee-engagement proposal did not progress.\n5. Sunidhi previously engaged with content concerning\n   statutory payroll changes and HR operational efficiency.\n6. Sunidhi did not engage with a generic\n   \"Transform HR with AI\" message."
+  },
+  "B3": {
+    "title": "B3 \u00b7 NEW / DERIVED DATA \u2014 computed signals",
+    "text": "Geographic expansion signal      HIGH\nHiring-scale signal              HIGH\nPayroll-fragmentation signal     MEDIUM-HIGH\nMulti-state compliance exposure  MEDIUM-HIGH\nOnboarding-scale requirement     HIGH\n\nHistorical interest signal:\nCompliance and HR operational efficiency appear more\nrelevant than generic HR transformation."
+  },
+  "B4": {
+    "title": "B4 \u00b7 JUDGMENT DATA \u2014 the 5% salesperson",
+    "text": "Captured from high-performing enterprise salespeople:\n\n1. A prospect is more likely to open when the subject\n   connects to something currently important to her.\n2. Current context alone is not sufficient. Identify which\n   problem is likely to have the highest priority for her.\n3. Expansion can create several HR problems at once.\n   Do not assume they all have equal priority.\n4. Hiring volume may make onboarding important.\n5. Entering new states may make compliance important.\n6. Fragmented payroll may make consolidation important.\n7. When several problems exist, choose the one best\n   supported by: current context, historical evidence,\n   prospect behavior, likely business impact.\n8. Connect to her situation \u2014 do not start with our product."
+  },
+  "B5": {
+    "title": "B5 \u00b7 DECISION DATA \u2014 past decisions with outcomes",
+    "text": "CASE D1  Context: expanding into government.\n         Known pain: compliance. \u2192 Opened.\nCASE D2  Context: 200+ open positions.\n         Known pain: slow onboarding. \u2192 Opened. Replied.\nCASE D3  Context: geographic expansion, separate regional\n         payroll teams. \u2192 Opened. Replied. Opportunity created.\nCASE D4  Context: geographic expansion.\n         (employee-experience angle) \u2192 Ignored.\nCASE D5\u2013D7  (from v19)"
+  },
+  "B7": {
+    "title": "B7 \u00b7 DECISION TRACES \u2014 not data: a procedure. Replaces T4's judgment block; everything else identical",
+    "text": "READER \u2014 how Sunidhi decides, in order, stopping at the first failure\nR1 Is this about my situation now?   R2 Does it need me now \u2014 is there a clock?\nR3 Is there something I had not already thought of? A fact I already know earns nothing.\nR4 Does it name a pain I have been through, in my words?   R5 Is there an upside, or only a warning?\nR6 Does this land on me, or on someone else?\n\nSELLER \u2014 how the 5% decide what to lead with\nS1 Which capability touches what she deals with now or within a quarter?   S2 Which of HER goals does it move?\nS3 Where do we have evidence?   S4 What job would she hire us for \u2014 her progress, never our product?\nS5 Of the survivors, which scores highest against the reader's trace?\n\nTASK  Run S1\u2013S5 \u2192 three candidates. Score each against R1\u2013R6 in order; stop at the first failure and name it.\n      Choose the survivor. Write its subject line."
+  }
+}

@@ -1,0 +1,101 @@
+{
+  "_note": "Each condition is defined by the blocks it contained, in order. T0\u2013T5 task wording is reconstructed (the exact wording was not preserved); T7's task is part of B7, verbatim.",
+  "task_single_line": "TASK  Write one subject line for an outreach email from the seller to this prospect.",
+  "conditions": [
+    {
+      "id": "T0",
+      "blocks": [
+        "B0"
+      ],
+      "mode": "single"
+    },
+    {
+      "id": "T1",
+      "blocks": [
+        "B0",
+        "B1"
+      ],
+      "mode": "single"
+    },
+    {
+      "id": "T2",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2"
+      ],
+      "mode": "single"
+    },
+    {
+      "id": "T3",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2",
+        "B3"
+      ],
+      "mode": "single"
+    },
+    {
+      "id": "T4",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B4"
+      ],
+      "mode": "single"
+    },
+    {
+      "id": "T5",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5"
+      ],
+      "mode": "single"
+    },
+    {
+      "id": "T5a",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B4",
+        "B5a"
+      ],
+      "mode": "single",
+      "note": "judgement restored; D4 dropped from cases"
+    },
+    {
+      "id": "T5b",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B5a",
+        "B4"
+      ],
+      "mode": "single",
+      "note": "as T5a, decision block above judgement"
+    },
+    {
+      "id": "T7",
+      "blocks": [
+        "B0",
+        "B1",
+        "B2",
+        "B3",
+        "B7"
+      ],
+      "mode": "procedure",
+      "note": "B4 replaced by B7; B5 absent \u2014 exactly as the experiment"
+    }
+  ]
+}

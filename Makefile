@@ -1,21 +1,21 @@
-.PHONY: setup verify test guard run evals seed up down clean
-setup:      ## full setup
+.PHONY: setup verify test series series2 t7 replay langsmith deepeval human
+setup:     ## venv + packages + checks
 	./setup_env.sh
-verify:     ## the checks only
+verify:    ## environment checks
 	. .venv/bin/activate && python scripts/verify_env.py
-test:       ## pytest on the stub model (no key needed)
+test:      ## 11 tests on the replay stub, no key
 	. .venv/bin/activate && pytest -q
-guard:      ## the reader must clear the known winning line, pass^3, ON THE API (reader = MODEL_SMALL in .env)
-	. .venv/bin/activate && API_TESTS=1 pytest -q tests/test_spine.py::test_reader_clears_the_known_winning_line
-run:        ## one prospect, with approval prompt  (make run P=arun)
-	. .venv/bin/activate && python scripts/run_one.py $(or $(P),sunidhi) --export data/synthetic/$(or $(P),sunidhi)_trace.json
-evals:      ## pass^k suite, exports sales.eval.v1
-	. .venv/bin/activate && python scripts/run_evals.py 5 data/synthetic/eval.json
-seed:       ## reseed Postgres + graph
-	. .venv/bin/activate && python scripts/seed_postgres.py && python scripts/seed_graph.py
-up:
-	docker compose up -d
-down:
-	docker compose down
-clean:
-	docker compose down -v
+series:    ## T0→T7 on the writer, k=3
+	. .venv/bin/activate && python scripts/run_conditions.py 3
+series2:   ## T0→T7 on both writers (the T1 identical-sentence check)
+	. .venv/bin/activate && python scripts/run_conditions.py 3 --two-writers
+t7:        ## one full T7 run, with the approval pause and the verifier
+	. .venv/bin/activate && python scripts/run_one.py sunidhi T7 --verify
+replay:    ## classroom replay of the latest T7 run → data/runs/replay_T7.json
+	. .venv/bin/activate && python scripts/export_replay.py T7
+langsmith: ## LangSmith experiment across all conditions
+	. .venv/bin/activate && python scripts/eval_langsmith.py
+deepeval:  ## DeepEval over the saved runs (+ --judge for the judged metric)
+	. .venv/bin/activate && python scripts/eval_deepeval.py
+human:     ## open the review sheet — your verdict is the final call
+	@echo "data/runs/human_review.csv"

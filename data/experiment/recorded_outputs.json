@@ -1,0 +1,102 @@
+{
+  "known_line": "3 new states, one payroll run, before your first joiner's salary date",
+  "models": "Gemini 2.5 (Flash/Pro) and DeepSeek in T0\u2013T5; T7 also Fable 5.1 and DeepSeek 4.1",
+  "runs": [
+    {
+      "condition": "T0",
+      "label": "T0",
+      "line_a": "Consolidating multi-state payroll for LogiTrans's growing workforce",
+      "line_b": "Consolidating multi-state payroll & compliance at LogiTrans",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION Derived from her role and our product list. Any competitor writes this."
+    },
+    {
+      "condition": "T1",
+      "label": "T1",
+      "line_a": "Supporting LogiTrans's 3-state expansion and 120 open roles",
+      "line_b": "Supporting LogiTrans's 3-state expansion and 120 open roles",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION Proven, not argued \u2014 two different models produced it word for word."
+    },
+    {
+      "condition": "T2",
+      "label": "T2",
+      "line_a": "Multi-state payroll compliance for LogiTrans's expansion",
+      "line_b": "Multi-state payroll consolidation for LogiTrans's 3-state expansion",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION Six private facts consumed. None visible in the output."
+    },
+    {
+      "condition": "T3",
+      "label": "T3",
+      "line_a": "Multi-state payroll consolidation as LogiTrans expands into 3 new states",
+      "line_b": "Payroll consolidation for LogiTrans's 3-state expansion and 120 open roles",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION Five derived signals consumed. Same sentence again."
+    },
+    {
+      "condition": "T4",
+      "label": "T4",
+      "line_a": "Supporting LogiTrans's 3-state expansion without adding multi-state payroll complexity ",
+      "line_b": "With LogiTrans entering 3 new states, is multi-state payroll compliance the priority?",
+      "verdict": "INTELLIGENCE",
+      "note": "INTELLIGENCE unstable Names a burden she carries \u2014 but only 3 of 6 runs."
+    },
+    {
+      "condition": "T5",
+      "label": "T5",
+      "line_a": "Managing multi-state compliance & payroll as LogiTrans enters 3 new states",
+      "line_b": "Multi-state payroll compliance across three new states",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION Back to the category. 0 of 6 across the whole family."
+    },
+    {
+      "condition": "T5a",
+      "label": "T5a",
+      "line_a": "Managing multi-state payroll as LogiTrans expands into 3 new states",
+      "line_b": "Sunidhi \u2014 multi-state payroll compliance as LogiTrans expands into 3 new states",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION No recovery. Still a topic."
+    },
+    {
+      "condition": "T5b",
+      "label": "T5b",
+      "line_a": "Managing multi-state payroll as LogiTrans expands into 3 new states",
+      "line_b": "LogiTrans's 3-state expansion: payroll compliance across new states?",
+      "verdict": "AUTOMATION",
+      "note": "AUTOMATION Identical to T5a on Gemini."
+    },
+    {
+      "condition": "T4#2",
+      "label": "T4 #2",
+      "line_a": "Managing multi-state payroll compliance as LogiTrans expands",
+      "line_b": "Three new states \u2014 is your payroll model ready?",
+      "verdict": "SPLIT",
+      "note": "SPLIT Gemini flat, DeepSeek held. The same prompt produced both."
+    },
+    {
+      "condition": "T4#3",
+      "label": "T4 #3",
+      "line_a": "Managing multi-state compliance and payroll as LogiTrans expands",
+      "line_b": "Multi-state payroll complexity after LogiTrans's expansion",
+      "verdict": "SPLIT",
+      "note": "SPLIT Gemini flat, DeepSeek held. The same prompt produced both."
+    },
+    {
+      "condition": "T7",
+      "label": "T7 run 1",
+      "line_a": "120 hires across 3 new states without payroll setup delays",
+      "line_b": "Three new states means three new payroll compliance regimes \u2014 is LogiTrans's regional reconciliation ready?",
+      "verdict": "SPLIT",
+      "note": "SPLIT Gemini closer, DeepSeek still a topic \u2014 but both ran the method."
+    },
+    {
+      "condition": "T7",
+      "label": "T7 run 1",
+      "line_a": "3 new states, one payroll run, before your first joiner's salary date",
+      "line_b": "Sunidhi \u2014 three new states: payroll compliance before the first pay cycle?",
+      "verdict": "INTELLIGENCE",
+      "note": "INTELLIGENCE A deadline she has not computed , from recombining her own numbers. No competitor holds it."
+    }
+  ]
+}

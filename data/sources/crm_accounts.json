@@ -1,0 +1,35 @@
+{
+  "_system": "CRM \u00b7 account master",
+  "accounts": [
+    {
+      "id": "sunidhi",
+      "name": "Sunidhi Rao",
+      "role": "VP HR",
+      "company": "LogiTrans",
+      "company_desc": "Mid-size logistics company"
+    },
+    {
+      "id": "arun",
+      "name": "Arun Deshpande",
+      "role": "Head of Operations",
+      "company": "Sunrise Logistics",
+      "company_desc": "Regional logistics company"
+    },
+    {
+      "id": "nikhil",
+      "name": "Nikhil Raman",
+      "role": "CFO",
+      "company": "Steady Freight",
+      "company_desc": "Freight company"
+    }
+  ],
+  "seller": {
+    "company": "HumanAITech",
+    "provides": [
+      "payroll and HR platform",
+      "multi-state statutory compliance",
+      "payroll consolidation",
+      "onboarding at scale"
+    ]
+  }
+}

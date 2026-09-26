@@ -1,0 +1,48 @@
+{
+  "_system": "System of record \u00b7 past outreach decisions with outcomes",
+  "cases": [
+    {
+      "id": "D1",
+      "context": "expanding into government.",
+      "known_pain": "compliance.",
+      "outcome": "Opened.",
+      "choice_set": [
+        "compliance",
+        "onboarding"
+      ]
+    },
+    {
+      "id": "D2",
+      "context": "200+ open positions.",
+      "known_pain": "slow onboarding.",
+      "outcome": "Opened. Replied.",
+      "choice_set": [
+        "onboarding",
+        "compliance"
+      ]
+    },
+    {
+      "id": "D3",
+      "context": "geographic expansion, separate regional payroll teams.",
+      "known_pain": null,
+      "outcome": "Opened. Replied. Opportunity created.",
+      "choice_set": [
+        "consolidation",
+        "compliance",
+        "onboarding"
+      ]
+    },
+    {
+      "id": "D4",
+      "context": "geographic expansion.",
+      "known_pain": null,
+      "angle": "employee-experience angle",
+      "outcome": "Ignored.",
+      "choice_set": [
+        "employee experience",
+        "compliance"
+      ]
+    }
+  ],
+  "_gap": "D5\u2013D7 were in the original experiment and are not recoverable. The experiment's B5 lists them as '(from v19)'."
+}

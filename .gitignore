@@ -2,11 +2,8 @@
 .env
 __pycache__/
 *.pyc
-data/kuzu*
-data/index/*
-!data/index/.gitkeep
-data/synthetic/*
-!data/synthetic/.gitkeep
-requirements.lock
-.DS_Store
+.pytest_cache/
 .deepeval/
+data/runs/*
+!data/runs/.gitkeep
+requirements.lock
