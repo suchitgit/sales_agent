@@ -23,8 +23,8 @@ if "__interrupt__" in out:
     out = app.invoke(Command(resume={"approved": ok, "by": "rep"}), cfg)
 out = dict(out)
 if "--verify" in sys.argv and (out.get("survivor") or out.get("line")):
-    from salesagent.evals.verifier import verify_line
-    b = out["blocks"]; out["verifier"] = verify_line(out.get("survivor") or out.get("line"), b["B1"] + "\n" + b["B2"])
+    from salesagent.evals.verifier import verify_line, known_to_her
+    out["verifier"] = verify_line(out.get("survivor") or out.get("line"), known_to_her(pid, out["blocks"]["B1"]))
 print("\n=== TRACE ===")
 for s in out["trace"]: print(f"  [{s['actor']:5}] {s['step']:38} {s['detail'][:150]}  {s['ms']} ms")
 print("\n=== CHECKS ===", json.dumps(score(out), indent=1))

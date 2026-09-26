@@ -33,3 +33,11 @@ def test_subject_line_is_extracted_from_labelled_answers():
     }
     for raw, want in shapes.items():
         assert extract_line(raw) == want, raw
+
+def test_verifier_knows_her_history_and_nothing_else_from_b2():
+    from salesagent.blocks import fetch_all, build
+    from salesagent.evals.verifier import known_to_her
+    k = known_to_her("sunidhi", build(fetch_all("sunidhi"))["B1"])
+    assert "expanding into three new states" in k                                           # B1
+    assert "separate payroll processes" in k and "manual reconciliation" in k               # n2, n3 — her_experience
+    assert "webinar" not in k and "Transform HR" not in k and "IGNORE" not in k             # not n1, n6; never n11
