@@ -83,3 +83,17 @@ payroll reconciliations"* — procedure followed, proxy A.
 3. **Verifier knowledge:** B1 plus the CRM notes marked `her_experience` only (n2, n3); never n1, n6 or n11.
 4. **No server-side model fallback on Fable.** A refusal would otherwise be answered silently by another model inside
    the experiment; a refusal or a cut-off stays in the run as data (`stop_reason` in the trace).
+
+## Full T7 runs with the independent verifier (`make t7`, after decisions 2–3)
+
+Approval by `--auto` (labelled so in the trace); the send is simulated.
+
+| Run | Survivor | Rejected by Fable | Proxy | Verifier (calibrated reader, all six) |
+|---|---|---|---|---|
+| A | 3 new states, 120 open roles: get each state's payroll registered before the first offer letter lands | "Consolidating LogiTrans's regional payroll processes into one run" @R2 · "Multi-state payroll compliance: a follow-up to the session your HR ops team joined" @R3 | I | R1–R6 pass |
+| B | Before LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile | "Onboarding 120 hires across new states without adding HR headcount" @R3 · "How AI is transforming HR at logistics companies" @R1 | I | R1–R6 pass |
+
+Both followed the procedure; both carry a computed deadline tied to her own event; the verifier — told only B1 and her
+own experiences (n2, n3) — cleared both on all six checks. Run B's classroom replay (`sales.replay.v1`, eight stops,
+with approval, verifier and a LangSmith trace link) is `2026-09-26_replay_T7_fable.json`. Across all six real T7 runs on
+Fable today the procedure was followed six times; the proxy reads intelligence in three (series run 2, A, B).

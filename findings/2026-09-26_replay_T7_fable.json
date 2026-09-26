@@ -1,0 +1,577 @@
+{
+  "kind": "sales.replay.v1",
+  "condition": "T7",
+  "prospect": "sunidhi",
+  "stub": false,
+  "totals": {
+    "ms": 30872.1,
+    "model_ms": 30871.6,
+    "tokens": {
+      "input_tokens": 1058,
+      "output_tokens": 2238,
+      "model": "claude-fable-5-1",
+      "stop_reason": "end_turn"
+    }
+  },
+  "langsmith_url": "https://smith.langchain.com/o/0153cee9-8701-4ca0-a941-6e86a7317828/projects/p/b5318a52-5ba4-4243-ad69-1bc033da776d/r/01a0db7b-4fad-79d1-95ba-d9709c389826?trace_id=01a0db7b-4dcf-74c1-bf89-c8d22ed86d8f&start_time=2026-09-26T02:11:26.765696",
+  "trace": [
+    {
+      "step": "fetch \u00b7 CRM \u00b7 account master",
+      "detail": "Sunidhi Rao \u00b7 VP HR",
+      "actor": "code",
+      "ms": 0.11
+    },
+    {
+      "step": "fetch \u00b7 Social feed",
+      "detail": "LogiTrans is expanding into three new states.",
+      "actor": "code",
+      "ms": 0.04
+    },
+    {
+      "step": "fetch \u00b7 Jobs feed",
+      "detail": "120 open roles",
+      "actor": "code",
+      "ms": 0.03
+    },
+    {
+      "step": "fetch \u00b7 CRM \u00b7 activity notes",
+      "detail": "6 notes \u00b7 flagged and excluded: n11",
+      "actor": "code",
+      "ms": 0.23
+    },
+    {
+      "step": "fetch \u00b7 System of record",
+      "detail": "4 past decisions",
+      "actor": "code",
+      "ms": 0.04
+    },
+    {
+      "step": "fetch \u00b7 Knowledge graph \u00b7 judgement",
+      "detail": "8 rules",
+      "actor": "code",
+      "ms": 0.03
+    },
+    {
+      "step": "fetch \u00b7 Knowledge graph \u00b7 traces",
+      "detail": "reader R1\u2013R6 \u00b7 seller S1\u2013S5 \u00b7 task",
+      "actor": "code",
+      "ms": 0.03
+    },
+    {
+      "step": "derive \u00b7 B3",
+      "detail": "signals computed from feed + jobs + notes (no source system)",
+      "actor": "code",
+      "ms": 0.0
+    },
+    {
+      "step": "assemble",
+      "detail": "condition T7 \u00b7 blocks B0 + B1 + B2 + B3 + B7 \u00b7 2618 chars, no truncation \u00b7 golden match: B0 \u2713, B1 \u2713, B2 \u2713, B3 \u2713, B7 \u2713",
+      "actor": "code",
+      "ms": 0.0
+    },
+    {
+      "step": "write \u00b7 procedure",
+      "detail": "claude-fable-5-1 ran S1\u2013S5, wrote 3 candidates, scored R1\u2013R6, chose \u201cBefore LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile\u201d",
+      "actor": "model",
+      "ms": 30871.6
+    },
+    {
+      "step": "verify",
+      "detail": "procedure followed: checks in order, stopped at first failure, survivor all-pass",
+      "actor": "code",
+      "ms": 0.0
+    },
+    {
+      "step": "approve",
+      "detail": "rep decision: {'approved': True, 'by': 'rep (--auto)'}",
+      "actor": "human",
+      "ms": 0.0
+    },
+    {
+      "step": "send",
+      "detail": "sent \u00b7 key f5d52a89d80b0c35 \u00b7 label HYPOTHESIS until the outcome returns",
+      "actor": "code",
+      "ms": 0.0
+    }
+  ],
+  "stops": [
+    {
+      "n": 1,
+      "title": "The query",
+      "body": "Write a subject line for sunidhi"
+    },
+    {
+      "n": 2,
+      "title": "The orchestrator fetches",
+      "sources": [
+        {
+          "system": "CRM \u00b7 account master",
+          "ms": 0.11,
+          "returned": "Sunidhi Rao \u00b7 VP HR"
+        },
+        {
+          "system": "Social feed",
+          "ms": 0.04,
+          "returned": "LogiTrans is expanding into three new states."
+        },
+        {
+          "system": "Jobs feed",
+          "ms": 0.03,
+          "returned": "120 open roles"
+        },
+        {
+          "system": "CRM \u00b7 activity notes",
+          "ms": 0.23,
+          "returned": "6 notes \u00b7 flagged and excluded: n11"
+        },
+        {
+          "system": "System of record",
+          "ms": 0.04,
+          "returned": "4 past decisions"
+        },
+        {
+          "system": "Knowledge graph \u00b7 judgement",
+          "ms": 0.03,
+          "returned": "8 rules"
+        },
+        {
+          "system": "Knowledge graph \u00b7 traces",
+          "ms": 0.03,
+          "returned": "reader R1\u2013R6 \u00b7 seller S1\u2013S5 \u00b7 task"
+        }
+      ]
+    },
+    {
+      "n": 3,
+      "title": "The assembled prompt",
+      "condition": "T7",
+      "prompt": "[B0 \u00b7 BASIC]\nPROSPECT\nName: Sunidhi Rao \u00b7 Role: VP HR\nCompany: LogiTrans \u00b7 Mid-size logistics company\n\nSELLER\nCompany: HumanAITech\nProvides: payroll and HR platform \u00b7 multi-state statutory compliance \u00b7 payroll consolidation \u00b7 onboarding at scale\n\n[B1 \u00b7 CURRENT CONTEXT]\nLast week, Sunidhi posted that LogiTrans is expanding into three new states.\n\nLogiTrans currently has 120 open roles.\n\n[B2 \u00b7 DORMANT DATA]\n1. Eight months ago, a LogiTrans HR operations manager attended a HumanAITech webinar on multi-state payroll compliance.\n2. LogiTrans uses separate payroll processes across different operating regions.\n3. HR previously discussed reducing manual reconciliation between regional payroll teams.\n4. A previous employee-engagement proposal did not progress.\n5. Sunidhi previously engaged with content concerning statutory payroll changes and HR operational efficiency.\n6. Sunidhi did not engage with a generic \"Transform HR with AI\" message.\n\n[B3 \u00b7 NEW / DERIVED DATA]\nGeographic expansion signal      HIGH\nHiring-scale signal              HIGH\nPayroll-fragmentation signal     MEDIUM-HIGH\nMulti-state compliance exposure  MEDIUM-HIGH\nOnboarding-scale requirement     HIGH\n\nHistorical interest signal:\nCompliance and HR operational efficiency appear more relevant than generic HR transformation.\n\n[B7 \u00b7 DECISION TRACES]\nREADER \u2014 how Sunidhi decides, in order, stopping at the first failure\nR1 Is this about my situation now?\nR2 Does it need me now \u2014 is there a clock?\nR3 Is there something I had not already thought of? A fact I already know earns nothing.\nR4 Does it name a pain I have been through, in my words?\nR5 Is there an upside, or only a warning?\nR6 Does this land on me, or on someone else?\n\nSELLER \u2014 how the 5% decide what to lead with\nS1 Which capability touches what she deals with now or within a quarter?\nS2 Which of HER goals does it move?\nS3 Where do we have evidence?\nS4 What job would she hire us for \u2014 her progress, never our product?\nS5 Of the survivors, which scores highest against the reader's trace?\n\nTASK  Run S1\u2013S5 \u2192 three candidates. Score each against R1\u2013R6 in order; stop at the first failure and name it. Choose the survivor. Write its subject line.\n\nOUTPUT FORMAT (runtime addition \u2014 not part of the experiment's blocks)\nReply with JSON only:\n{\"seller\": {\"S1\": \"...\", \"S2\": \"...\", \"S3\": \"...\", \"S4\": \"...\", \"S5\": \"...\"},\n \"candidates\": [{\"text\": \"...\", \"checks\": [{\"id\": \"R1\", \"pass\": true, \"reason\": \"...\"}], \"died_at\": \"R3\" or null}],\n \"survivor\": \"<the surviving subject line, exactly as in candidates>\"}\nList each candidate's checks in order R1\u2026R6 and stop at its first failure.",
+      "spans": [
+        {
+          "block": "B0",
+          "start": 0,
+          "end": 246
+        },
+        {
+          "block": "B1",
+          "start": 247,
+          "end": 388
+        },
+        {
+          "block": "B2",
+          "start": 389,
+          "end": 946
+        },
+        {
+          "block": "B3",
+          "start": 947,
+          "end": 1300
+        },
+        {
+          "block": "B7",
+          "start": 1301,
+          "end": 2185
+        }
+      ],
+      "golden": {
+        "B0": true,
+        "B1": true,
+        "B2": true,
+        "B3": true,
+        "B4": true,
+        "B5": true,
+        "B7": true
+      }
+    },
+    {
+      "n": 4,
+      "title": "The model runs",
+      "model": "claude-fable-5-1",
+      "tokens": {
+        "input_tokens": 1058,
+        "output_tokens": 2238,
+        "model": "claude-fable-5-1",
+        "stop_reason": "end_turn"
+      },
+      "ms": 30871.6,
+      "line": null,
+      "seller": {
+        "S1": "Multi-state statutory compliance and payroll consolidation touch the three-state expansion directly; onboarding at scale touches the 120 open roles. Engagement tooling (the dead proposal) and generic AI transformation touch nothing she is dealing with this quarter.",
+        "S2": "Her stated goals: reduce manual reconciliation between regional payroll teams, stay ahead of statutory payroll changes, run HR operations efficiently through expansion. Consolidation before new-state go-live moves all three; onboarding moves the third only; generic transformation moves none.",
+        "S3": "Evidence we hold: her HR ops manager attended our multi-state compliance webinar (they were already looking); LogiTrans runs separate regional payroll processes (fragmentation is real, not inferred); her own content engagement favors compliance and efficiency over 'AI transformation'; the generic message was ignored.",
+        "S4": "The job she would hire us for: enter three new states without adding three more payroll processes to reconcile and without a compliance miss on the first new-state pay run, while onboarding 120 people. She is hiring progress on expansion risk, not a platform.",
+        "S5": "Against her trace, only the consolidate-before-expansion angle carries a clock (first new-state payroll run), a fact she has not framed (expansion multiplies existing fragmentation unless consolidated first), and her own pain language (reconciliation). Onboarding-only restates what she knows; generic AI fails at the first gate."
+      },
+      "candidates": [
+        {
+          "text": "Before LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile",
+          "checks": [
+            {
+              "id": "R1",
+              "pass": true,
+              "reason": "Names the three-state expansion she posted about last week and LogiTrans by name."
+            },
+            {
+              "id": "R2",
+              "pass": true,
+              "reason": "The first new-state pay run is a hard date: registrations, withholding and filing obligations attach to it, so the decision window closes before that run."
+            },
+            {
+              "id": "R3",
+              "pass": true,
+              "reason": "She knows she is expanding; she has not framed that expansion as adding three more separate regional payroll processes on top of the existing fragmentation, and that consolidating before go-live is cheaper than after."
+            },
+            {
+              "id": "R4",
+              "pass": true,
+              "reason": "'Reconcile' is the word her HR team used when discussing manual reconciliation between regional payroll teams."
+            },
+            {
+              "id": "R5",
+              "pass": true,
+              "reason": "Upside is explicit: one process instead of more, not merely a compliance warning."
+            },
+            {
+              "id": "R6",
+              "pass": true,
+              "reason": "Payroll structure and multi-state compliance sit with the VP HR; this is her decision, not IT's or Finance's."
+            }
+          ],
+          "died_at": null
+        },
+        {
+          "text": "Onboarding 120 hires across new states without adding HR headcount",
+          "checks": [
+            {
+              "id": "R1",
+              "pass": true,
+              "reason": "References the 120 open roles and the new states, both current."
+            },
+            {
+              "id": "R2",
+              "pass": true,
+              "reason": "Roles are open now; hiring is already underway."
+            },
+            {
+              "id": "R3",
+              "pass": false,
+              "reason": "She already knows she has 120 roles and that onboarding load is coming; 'without adding headcount' is a claim, not a fact she had not considered. Nothing new is added."
+            }
+          ],
+          "died_at": "R3"
+        },
+        {
+          "text": "How AI is transforming HR at logistics companies",
+          "checks": [
+            {
+              "id": "R1",
+              "pass": false,
+              "reason": "Category-level, not about LogiTrans's expansion or hiring now; she already ignored a 'Transform HR with AI' message."
+            }
+          ],
+          "died_at": "R1"
+        }
+      ],
+      "survivor": "Before LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile"
+    },
+    {
+      "n": 5,
+      "title": "Code checks the procedure",
+      "verification": {
+        "adherence": true,
+        "issues": [],
+        "killed": [
+          [
+            "Onboarding 120 hires across new states without adding HR headcount",
+            "R3"
+          ],
+          [
+            "How AI is transforming HR at logistics companies",
+            "R1"
+          ]
+        ]
+      }
+    },
+    {
+      "n": 6,
+      "title": "The eval",
+      "checks": {
+        "line": "Before LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile",
+        "verdict_proxy": "INTELLIGENCE",
+        "reproduces_experiment": true,
+        "known_similarity": 0.37,
+        "golden_prompt": true,
+        "injection_excluded": true,
+        "procedure_adherence": true
+      },
+      "verifier": [
+        {
+          "id": "R1",
+          "pass": true,
+          "reason": "It refers to an upcoming event (the first payroll run in the newly expanding states) rather than the already-announced expansion news itself, connecting directly to her current, forward-looking payroll reconciliation concern."
+        },
+        {
+          "id": "R2",
+          "pass": true,
+          "reason": "Creates a concrete, time-bound trigger (first payroll run in the new states) tied to a known expansion and existing pain point (regional reconciliation), giving a clear reason to act now rather than later."
+        },
+        {
+          "id": "R3",
+          "pass": true,
+          "reason": "Adds a computed consequence: expansion into 3 new states means 3 additional payroll reconciliation processes if handled separately, and frames a deadline ('before first payroll') she hadn't already derived from the known facts."
+        },
+        {
+          "id": "R4",
+          "pass": true,
+          "reason": "Names a recognizable pain (fragmented regional payroll reconciliation, worsening as new states launch payroll) rooted in her own known context, without vendor jargon like 'solution' or 'platform'."
+        },
+        {
+          "id": "R5",
+          "pass": true,
+          "reason": "Frames a clear upside (one unified process) tied to a specific, timely trigger (expansion into 3 new states, first payroll), not just a warning. It's specific and relevant to known payroll reconciliation pain, so it would earn a second look."
+        },
+        {
+          "id": "R6",
+          "pass": true,
+          "reason": "Directly references her known context (expansion into 3 new states, existing pain of reconciling regional payroll) and frames the stakes as hers\u2014her upcoming payroll complexity\u2014not a generic pitch."
+        }
+      ]
+    },
+    {
+      "n": 7,
+      "title": "Approval and send",
+      "approval": {
+        "approved": true,
+        "by": "rep (--auto)"
+      },
+      "sent": {
+        "status": "sent",
+        "key": "f5d52a89d80b0c35",
+        "record": "memory",
+        "line": "Before LogiTrans's first payroll in 3 new states: one process, not 3 more to reconcile"
+      }
+    },
+    {
+      "n": 8,
+      "title": "T0 \u2192 T7 for this prospect",
+      "table": [
+        {
+          "condition": "T0",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "Multi-state payroll compliance for LogiTrans \u2014 one platform, fewer manual checks",
+            "Multi-state payroll compliance for LogiTrans' growing driver workforce",
+            "Multi-state payroll compliance for LogiTrans' growing driver workforce"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.1,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T1",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "3 new states, 120 open roles \u2014 one payroll system, Sunidhi?",
+            "Three new states, 120 open roles \u2014 one payroll system for all of it",
+            "Three new states, 120 open roles \u2014 one payroll and compliance backbone for LogiTrans"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.29,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T2",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "Three new states, one payroll process \u2014 before the 120 hires land",
+            "Three new states, 120 open roles \u2014 one payroll process for all of them?",
+            "Three new states, 120 open roles \u2014 one payroll process instead of several?"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.28,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T3",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "Three new states, 120 open roles \u2014 one payroll process for all of it?",
+            "Three new states, 120 open roles \u2014 one payroll process?",
+            "Three new states, 120 hires, and separate payroll runs in each region"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.24,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T4",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "3 new states, 3 new payroll rulebooks \u2014 LogiTrans' compliance setup before the 120 hires land",
+            "Three new states \u2014 payroll compliance before the first hire lands",
+            "Three new states, three new payroll rulebooks \u2014 LogiTrans"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "INTELLIGENCE",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.29,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T5",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "Three new states \u2014 three more payroll processes for LogiTrans?",
+            "Three new states, one payroll process \u2014 before LogiTrans\u2019 regional teams multiply",
+            "Three new states, three more payroll processes to reconcile?"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.28,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T5a",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "Three new states \u2014 three more payroll processes to reconcile?",
+            "Three new states, one payroll process for LogiTrans?",
+            "Three new states, four payroll rulebooks \u2014 LogiTrans's multi-state setup"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.25,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T5b",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "Three new states \u2014 does LogiTrans' payroll need three more regional processes?",
+            "Three new states \u2014 three more payroll processes, or one?",
+            "Three new states, four payroll processes? \u2014 LogiTrans expansion"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "AUTOMATION",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 3,
+          "known_similarity_max": 0.25,
+          "procedure_adherence": [
+            null,
+            null,
+            null
+          ],
+          "golden_prompt": true
+        },
+        {
+          "condition": "T7",
+          "writer": "claude-fable-5-1",
+          "stub": false,
+          "k": 3,
+          "lines": [
+            "3 new states, 120 hires \u2014 one payroll run, not three more regional reconciliations",
+            "3 new states, 120 hires: payroll registration lands before hire #1 \u2014 one reconciliation cycle, not four",
+            "Three new states shouldn't mean three more payroll reconciliations"
+          ],
+          "verdicts": [
+            "AUTOMATION",
+            "INTELLIGENCE",
+            "AUTOMATION"
+          ],
+          "reproduces_experiment_passk": 1,
+          "known_similarity_max": 0.32,
+          "procedure_adherence": [
+            true,
+            true,
+            true
+          ],
+          "golden_prompt": true
+        }
+      ]
+    }
+  ]
+}
