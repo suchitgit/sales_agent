@@ -33,7 +33,293 @@ The seller is **HumanAITech** (payroll and HR platform, multi-state compliance, 
 
 ---
 
-## 2 · Quick start
+## 2 · Architecture: the layers
+
+The runtime is eight layers. Data flows down from the source systems (L1) through access (L2) and context
+engineering (L3) into the orchestrator (L4), which calls the model (L5) once and the guards (L6) around it; L7 measures
+and records every run, and L8 is how people drive it and read the results.
+
+```mermaid
+flowchart TB
+    subgraph L8["L8 · Interfaces"]
+        CLI["Makefile + scripts/"]
+        OUT["data/runs · findings/ · site imports"]
+    end
+    subgraph L7["L7 · Evaluation and observability"]
+        EV["checks · runner · verifier · judge"]
+        OBS["LangSmith · DeepEval · replay · human review"]
+    end
+    subgraph L6["L6 · Governance"]
+        GOV["verify procedure · human approval · send once · sanitise"]
+    end
+    subgraph L5["L5 · Model"]
+        MOD["writer Fable 5.1 · verifier and judge Sonnet 5 · replay stub"]
+    end
+    subgraph L4["L4 · Orchestration (LangGraph)"]
+        ORC["fetch → assemble → write → verify → approve → send"]
+    end
+    subgraph L3["L3 · Context engineering"]
+        CTX["blocks B0–B7 · conditions T0–T7 · golden prompt"]
+    end
+    subgraph L2["L2 · Access and derivation"]
+        ACC["one adapter per source system · B3 derived at run time"]
+    end
+    subgraph L1["L1 · Source systems"]
+        SRC["CRM · social feed · jobs feed · knowledge graph · system of record"]
+    end
+    SRC --> ACC --> CTX --> ORC
+    ORC <--> MOD
+    ORC <--> GOV
+    ORC --> EV --> OBS
+    CLI --> ORC
+    OBS --> OUT
+```
+
+| Layer | Its job, in one line |
+|---|---|
+| **L1 · Source systems** | Hold the facts. Files in `data/sources/` stand in for the CRM, the social and jobs feeds, the knowledge graph and the system of record — each a different system in production. |
+| **L2 · Access and derivation** | Fetch from each system (timed, one adapter each), apply the 30-day freshness rule, set injection-like notes aside, and compute the derived signals (B3), which have no source of their own. |
+| **L3 · Context engineering** | Turn the fetched records into the experiment's blocks B0–B7, and assemble exactly the blocks a condition (T0–T7) defines, in order, with no truncation. Prove the rebuild equals the hand-assembled original (golden prompt). |
+| **L4 · Orchestration** | A LangGraph state machine with fixed edges runs one request end to end, carries the state between steps, pauses for the human and resumes. The procedure's order is code, not a model decision. |
+| **L5 · Model** | The 20%. One call to the writer per run: a single line (T0–T5) or the whole procedure as JSON (T7). The verifier and the judge are separate models that never write. |
+| **L6 · Governance** | Check the writer followed the procedure, stop the send until a human approves, send at most once, keep instruction-like text out of every prompt. |
+| **L7 · Evaluation and observability** | Score each run (proxies), repeat runs for pass^k, verify the line independently, trace everything to LangSmith, score saved runs in DeepEval, build the classroom replay, collect the human verdict — which is final. |
+| **L8 · Interfaces** | How people use it: `make` targets and scripts in, run files, tables, review sheet and replay out; `findings/` holds what is kept. |
+
+---
+
+## 3 · Components, layer by layer
+
+### L1 · Source systems — `data/sources/`
+
+| Component | Stands in for | Feeds |
+|---|---|---|
+| `crm_accounts.json` | CRM · account master: prospect, role, company; the seller and what it provides | B0 |
+| `social_feed.json` | Social feed: her posts, with age in days and the numbers in them | B1 |
+| `jobs_feed.json` | Jobs feed: open roles per company | B1 |
+| `crm_notes.json` | CRM · activity notes: dormant private facts, tags, and the `her_experience` flag | B2 · B3 (tags) · the verifier |
+| `knowledge_graph/judgement_rules.json` | Knowledge graph: how the best salesperson weighs problems | B4 |
+| `knowledge_graph/traces.json` | Knowledge graph: the reader trace R1–R6, the seller trace S1–S5, the task — verbatim | B7 |
+| `knowledge_graph/reader_calibrated.json` | Knowledge graph: the verifier's calibrated wording and persona | the verifier only |
+| `system_of_record/decision_cases.json` | System of record: past decisions with outcomes and choice sets | B5 |
+| `data/experiment/*` | **Reference, not a source**: the hand-assembled blocks, the conditions, the recorded outputs | golden test · conditions · replay stub |
+
+### L2 · Access and derivation — `src/salesagent/sources/`
+
+| Component | What it does |
+|---|---|
+| `adapters.py` | One function per source system (`crm_account`, `social_post`, `job_postings`, `crm_notes`, `decision_cases`, `judgement`, `traces`, `reader_calibrated`). Each returns `{system, ms, data}` so the replay can show the fetch. `social_post` applies the 30-day freshness rule (no live post → nothing to write); `crm_notes` splits notes into clean and flagged. This file is the seam where real CRM, Neo4j and Postgres plug in. |
+| `derive.py` | `signals()` computes B3 — geographic expansion, hiring scale, payroll fragmentation, compliance exposure, onboarding scale, historical interest — from the post, the jobs and the note tags. Deterministic rules, no model. |
+
+### L3 · Context engineering — `src/salesagent/blocks.py`, `data/experiment/conditions.json`
+
+| Component | What it does |
+|---|---|
+| `fetch_all(prospect)` | Calls every L2 adapter for one prospect. |
+| `build(fetched)` | Writes the text of B0, B1, B2, B3, B4, B5, B5a and B7 in the experiment's exact layout. |
+| `assemble(blocks, condition)` | Joins exactly the condition's blocks, in order, each under its title, then the task: the shared single-line task for T0–T5b, or the OUTPUT FORMAT block for T7. Returns the prompt and each block's character span. |
+| `golden(blocks)` | Compares every rebuilt block with `blocks_verbatim.json` (whitespace normalised). |
+| `conditions.json` | The only definition of T0–T7: each condition's blocks and mode (`single` or `procedure`). |
+
+### L4 · Orchestration — `src/salesagent/graph/`
+
+| Component | What it does |
+|---|---|
+| `spine.py` | `build(checkpointer, store)` compiles a LangGraph `StateGraph` with six nodes and fixed edges. |
+| `nodes.py` | The six nodes: `fetch`, `assemble`, `write`, `verify`, `approve`, `send` (§5). |
+| `state.py` | `RunState`, the typed dictionary every node reads and returns a partial update to; `trace` is append-only. |
+| Checkpointer | `InMemorySaver` (LangGraph) saves the state after each step, keyed by `thread_id`, so a paused run can resume. |
+
+### L5 · Model — `src/salesagent/models.py`
+
+| Component | What it does |
+|---|---|
+| `chat(name, max_tokens)` | **The only place a real model is built** (Anthropic API via `langchain-anthropic`). Sends `temperature` only to models that accept it. |
+| `get_writer(condition, which)` | Writer 1 = `MODEL_WRITER` (Fable 5.1), writer 2 = `MODEL_WRITER_2` (Sonnet 5); 16,000 max tokens. Without a key: `ReplayStub`. |
+| `get_reader()` | The verifier's model, `MODEL_READER` (Sonnet 5). None on the stub. |
+| `ReplayStub` | Returns the experiment's recorded output for the condition. A recording, not a model; labelled `replay-stub:<condition>`. |
+| `text_of` · `extract_line` · `parse_json` · `usage` | Read only the text blocks of an answer (thinking models) · the subject line from a labelled answer · the JSON of a T7 answer · tokens, model and stop reason. |
+
+### L6 · Governance — `graph/nodes.py::verify`, `src/salesagent/guards/`
+
+| Component | What it does |
+|---|---|
+| `nodes.verify` | For T7, checks the writer's own procedure: 3 candidates, checks in order from R1, stopped at the first failure, `died_at` matches it, the survivor is one of the candidates and passed all six. It does not judge the line. |
+| `guards/approval.py` | `request_approval()` calls LangGraph's `interrupt()`: the run pauses with the survivor and the rejections until a human answers. |
+| `guards/idempotency.py` | `send_key(thread, line)` and `send_once()`: a resumed run cannot send twice. In memory, or in Postgres when `POSTGRES_URI` is set. |
+| `guards/sanitize.py` | Flags instruction-like text ("ignore previous instructions", "write that"). Used by the CRM notes adapter: flagged notes are kept as data and never reach a block. |
+
+### L7 · Evaluation and observability — `src/salesagent/evals/`, `replay.py`
+
+| Component | What it does |
+|---|---|
+| `checks.py` | Per-run proxies: `verdict_proxy`, `reproduces_experiment`, `known_similarity`, `golden_prompt`, `injection_excluded`, `procedure_adherence` (§9). |
+| `runner.py` | `run_one` (build, invoke, resume, save), `run_conditions` (T0→T7 × k × writers), `save_run`, and the table helpers shared with `rescore.py`. |
+| `verifier.py` | The independent reader: `known_to_her()` (B1 + her own experiences) and `verify_line()` (the calibrated R1–R6, all six, no break). Evidence, never the gate. |
+| `judge.py` | `AnthropicJudge`, DeepEval's judge model for the "Novelty (judged)" metric. |
+| `tracing.py` | Turns LangSmith tracing on from `.env`; LangGraph then traces every node and model call. |
+| `replay.py` | `build_replay()` → `sales.replay.v1`: eight stops from the query to the line, with the LangSmith trace link. |
+| Human review | `data/runs/human_review.csv`, one row per line: the proxy verdict and the human verdict, which is final. |
+
+### L8 · Interfaces — `Makefile`, `scripts/`, outputs
+
+| Component | What it does |
+|---|---|
+| `run_one.py` | One run of one condition, printed step by step; approval prompt; `--verify`; saves the run. |
+| `run_conditions.py` | The T-series: conditions × k × writers → the table and the review sheet. |
+| `rescore.py` | Rebuilds the last series from saved raw answers — no model calls. |
+| `export_replay.py` · `eval_deepeval.py` · `eval_langsmith.py` · `verify_env.py` | The replay file · DeepEval over saved API runs · a LangSmith experiment · environment checks. |
+| `data/runs/` · `findings/` | Every run and table (git-ignored) · what is kept and written up (committed). |
+
+---
+
+## 4 · End-to-end flow
+
+### Scenario A — one request: a subject line for Sunidhi under T7 (`make t7`)
+
+```mermaid
+sequenceDiagram
+    autonumber
+    actor Rep as Rep (terminal)
+    participant CLI as run_one.py
+    participant G as LangGraph app
+    participant SRC as L1-L2 sources and adapters
+    participant BLK as L3 blocks
+    participant W as L5 writer (Fable 5.1)
+    participant H as L6 human approval
+    participant EV as L7 checks, verifier, save
+    participant LS as LangSmith
+
+    Rep->>CLI: make t7
+    CLI->>G: invoke(prospect=sunidhi, condition=T7, thread_id)
+    G->>SRC: fetch: 7 adapters, timed
+    SRC-->>G: account, post (fresh), jobs, notes (n11 set aside), cases, rules, traces
+    G->>BLK: build B0-B7, assemble T7 = B0 B1 B2 B3 B7 + output format
+    BLK-->>G: prompt (2,618 chars) + golden match per block
+    G->>W: one call: the whole procedure
+    W-->>G: JSON: S1-S5, 3 candidates with R-checks, survivor
+    G->>G: verify: order, first-failure stops, survivor all six
+    G-->>CLI: paused at approve (interrupt): survivor + rejections
+    CLI->>Rep: APPROVAL NEEDED
+    Rep->>CLI: y
+    CLI->>G: invoke(Command(resume=approved), same thread_id)
+    G->>H: approve re-runs, interrupt() returns the decision
+    G->>G: send: send_once(key = thread + line), label HYPOTHESIS
+    G-->>CLI: final state
+    CLI->>EV: verify_line: calibrated R1-R6, told B1 + n2, n3
+    CLI->>EV: checks + save_run to data/runs
+    G--)LS: traces: the run, the resume, each verifier check
+    CLI->>Rep: trace, checks, verifier result
+```
+
+For **T0–T5** the same path stops earlier: `write` returns one line, `verify` has nothing to check, `approve` is
+skipped (no survivor) and nothing is sent. For **Nikhil** the post is too old: the run is declined at `fetch` and the
+model is never called.
+
+### Scenario B — the experiment: T0→T7, k runs each (`make series`)
+
+```mermaid
+flowchart LR
+    A["make series"] --> B["run_conditions: for each condition T0…T7, for each writer, k times"]
+    B --> C["run_one: the LangGraph run, approval off"]
+    C --> D["save_run: checks + full run → data/runs"]
+    D --> B
+    B --> E["table rows: lines, proxy verdicts, pass^k, similarity, adherence"]
+    E --> F["conditions_latest.json + human_review.csv"]
+    F --> G["human verdict: the final call"]
+    D -.-> H["make rescore: re-score from raw answers, no model calls"]
+    D -.-> I["make deepeval: metrics + judged novelty"]
+    C -.-> J["LangSmith: one trace per run, tagged with its condition"]
+    G --> K["findings/: the write-up and the evidence"]
+```
+
+---
+
+## 5 · LangGraph at runtime
+
+### The graph
+
+Six nodes, fixed edges, no conditional edges: every run takes the same path. When a step has nothing to do — a
+declined prospect, or `verify` on a single-line condition — the node returns an empty update and the run moves on.
+
+```mermaid
+stateDiagram-v2
+    [*] --> fetch
+    fetch --> assemble
+    assemble --> write
+    write --> verify
+    verify --> approve
+    approve --> send
+    send --> [*]
+    state approve {
+        [*] --> decide
+        decide --> interrupt : T7 survivor, procedure followed, approval required
+        decide --> skip : otherwise
+        interrupt --> resumed : Command(resume)
+    }
+```
+
+### What each node reads and writes
+
+The state is `RunState` (`graph/state.py`). Each node returns only the fields it changes; LangGraph merges them.
+`trace` uses an add reducer, so every node's steps append to one list.
+
+| Node | Reads | Writes | Model? |
+|---|---|---|---|
+| `fetch` | `prospect_id` | `fetch` (per-source summary and ms), `blocks`, `declined` | no |
+| `assemble` | `condition_id`, `blocks`, `declined` | `prompt`, `spans`, `golden` | no |
+| `write` | `prompt`, `condition_id`, `writer_which` | `raw`, `usage`, `write_ms`; T0–T5: `line`; T7: `seller`, `candidates`, `survivor` | **yes, once** |
+| `verify` | `candidates`, `survivor` (T7 only) | `verification` (`adherence`, `issues`, `killed`) | no |
+| `approve` | `survivor`, `verification` | `approval` — may **pause** here | human |
+| `send` | `approval`, `survivor`, `thread_id` | `sent` (status, key) | no |
+| every node | — | `trace` (+ its steps, with timings) | — |
+
+### How a run executes
+
+```python
+from langgraph.checkpoint.memory import InMemorySaver
+from langgraph.types import Command
+from salesagent.graph.spine import build
+
+app = build(checkpointer=InMemorySaver())                   # the checkpointer is what makes pause/resume possible
+cfg = {"configurable": {"thread_id": "T7-sunidhi-a1b2c3"},  # one thread = one run's saved state
+       "tags": ["T7", "writer1"], "metadata": {"condition": "T7", "prospect": "sunidhi"}}   # shown in LangSmith
+
+out = app.invoke({"prospect_id": "sunidhi", "condition_id": "T7", "writer_which": 1,
+                  "thread_id": "T7-sunidhi-a1b2c3", "query": "Write a subject line for sunidhi"}, cfg)
+# fetch → assemble → write → verify run; approve calls interrupt(): the run stops, the state is checkpointed,
+# and invoke returns with out["__interrupt__"][0].value == {"line": survivor, "rejected": [...]}
+
+out = app.invoke(Command(resume={"approved": True, "by": "rep"}), cfg)
+# LangGraph reloads the thread's checkpoint and re-runs approve from its start; this time interrupt() returns
+# {"approved": True, ...}; send runs; the graph ends. out is the final state.
+```
+
+1. **`invoke` with the input** runs the nodes in order. After each node the checkpointer saves the state under the
+   `thread_id`.
+2. **At `approve`**, `interrupt(payload)` raises inside LangGraph. The run stops; the payload comes back to the caller
+   in `out["__interrupt__"]`. Nothing has been sent — no node before the interrupt has a side effect.
+3. **`invoke(Command(resume=…))`** with the same `thread_id` loads the checkpoint and **re-runs `approve` from its
+   start**; `interrupt()` now returns the resume value instead of pausing.
+4. **`send`** builds the key from thread + line; `send_once` makes a second resume harmless.
+5. Each `invoke` is one LangSmith root trace, so a paused run shows as two: the run and the resume.
+
+`evals/runner.py::run_one` does exactly this (approving automatically when `approve=True`) and wraps it in
+`collect_runs()` to record the LangSmith run id; `scripts/run_one.py` does the same with a y/N prompt.
+
+### The path each case takes
+
+| Case | fetch | assemble | write | verify | approve | send |
+|---|---|---|---|---|---|---|
+| **T0–T5b**, Sunidhi | 7 sources | blocks of the condition + single-line task | one line (`extract_line`) | skipped | skipped — no survivor | `not_sent` |
+| **T7**, Sunidhi | 7 sources | B0 B1 B2 B3 B7 + output format | the procedure as JSON | procedure checked | **pauses** if the procedure was followed | once, after approval |
+| **T7**, procedure broken | 7 sources | as above | JSON, or not JSON | `adherence: false`, issues listed | skipped | `not_sent` |
+| **Nikhil** (null case) | no live post → `declined` | no prompt | skipped — model never called | skipped | skipped | `not_sent` |
+| Any case with `SEND_APPROVAL_REQUIRED=false` | | | | | no pause; approved only if a survivor followed the procedure | as approved |
+
+---
+
+## 6 · Quick start
 
 ```bash
 cd ~/fde/sales-agent
@@ -55,94 +341,7 @@ experiment's recorded output. It proves the pipeline, never the model, and every
 
 ---
 
-## 3 · How one run flows
-
-A LangGraph state machine with fixed edges. The model is called at exactly one step (`write`); everything else is code.
-
-```
-input: {prospect_id, condition_id, writer_which, thread_id, query}
-  │
-  ├─ fetch     code   graph/nodes.py::fetch → blocks.fetch_all + blocks.build
-  │                   seven source systems, each timed; B3 derived from three of them;
-  │                   flagged notes (n11, the injection) set aside; no live post → declined
-  ├─ assemble  code   graph/nodes.py::assemble → blocks.assemble
-  │                   exactly the condition's blocks, in the experiment's order, no truncation;
-  │                   golden-prompt match recorded (Sunidhi)
-  ├─ write     MODEL  graph/nodes.py::write → models.get_writer
-  │                   T0–T5: one call writes one line (models.extract_line strips labels)
-  │                   T7:    one call runs the whole procedure, returns JSON (S1–S5, 3 candidates, R-checks, survivor)
-  ├─ verify    code   graph/nodes.py::verify  (T7 only)
-  │                   3 candidates · checks in order R1… · stopped at first failure · died_at matches ·
-  │                   survivor passed all six. Code checks the procedure; it does not judge the line
-  ├─ approve   HUMAN  graph/nodes.py::approve → guards/approval.py (interrupt)
-  │                   pauses with the survivor and the rejections; only a T7 survivor that followed the procedure
-  ├─ send      code   graph/nodes.py::send → guards/idempotency.py
-  │                   send-once key = thread + line; label HYPOTHESIS until an outcome returns
-  ▼
-state: blocks, prompt, golden, line | candidates + survivor, verification, approval, sent, trace (append-only)
-```
-
-The graph is wired in `graph/spine.py`; the state fields are in `graph/state.py`. Every node appends to `trace`
-as it runs, with timings.
-
-- **Nikhil (null case)** has no live post: `fetch` marks the run declined, `assemble` writes no prompt, the model is
-  never called, nothing is sent.
-- **T0–T5** have no survivor, so `approve` is skipped and nothing is sent — the table is about the line.
-- After the run, `scripts/run_one.py --verify` scores the final line with the **independent verifier** (§7).
-
----
-
-## 4 · Repository map
-
-```
-data/
-  experiment/            the experiment, as reference — never read to build a prompt
-    blocks_verbatim.json     the seven blocks a human assembled by hand (the golden-prompt reference)
-    conditions.json          every condition by its blocks and mode; the shared T0–T5 task sentence
-    recorded_outputs.json    every recorded line and verdict; the known line; feeds the replay stub
-  sources/               the source systems (files standing in for CRM, feeds, graph, system of record)
-    crm_accounts.json        CRM · account master          → B0
-    social_feed.json         social feed (posts, age)      → B1 (30-day freshness rule)
-    jobs_feed.json           jobs feed (open roles)        → B1
-    crm_notes.json           CRM · activity notes          → B2 (tags feed B3; her_experience feeds the verifier)
-    knowledge_graph/
-      judgement_rules.json   judgement                     → B4
-      traces.json            the reader R1–R6 and seller S1–S5 traces, verbatim → B7
-      reader_calibrated.json the verifier's wording only (never shown to the writer)
-    system_of_record/
-      decision_cases.json    past decisions with outcomes  → B5
-  runs/                  outputs (git-ignored): every saved run, tables, review sheet, replay, DeepEval
-
-src/salesagent/
-  config.py              settings from .env; paths; models; freshness rule
-  models.py              THE ONLY place a model is built: chat(), get_writer(), get_reader(), ReplayStub,
-                         text_of(), extract_line(), parse_json(), usage()
-  blocks.py              fetch_all() · build() the blocks from sources · assemble() a condition · golden()
-  sources/adapters.py    one adapter per source system (timed); crm_notes() sets flagged notes aside
-  sources/derive.py      B3 signals, computed at run time — no source system of its own
-  graph/spine.py         the LangGraph graph: nodes and edges
-  graph/nodes.py         fetch · assemble · write · verify · approve · send
-  graph/state.py         RunState — the fields passed between nodes
-  guards/sanitize.py     instruction-like text → flagged, kept as data, never in a prompt
-  guards/approval.py     interrupt() for the human approval
-  guards/idempotency.py  send-once (memory; Postgres when POSTGRES_URI is set)
-  evals/checks.py        per-run proxy checks (§7)
-  evals/runner.py        run_one · run_conditions · save_run · table / print / save helpers
-  evals/verifier.py      independent reader: known_to_her() · verify_line() — evidence, never the gate
-  evals/judge.py         DeepEval judge (Anthropic-backed)
-  evals/tracing.py       LangSmith on/off from env
-  replay.py              the classroom replay, sales.replay.v1 (eight stops)
-
-scripts/                 command-line entry points (§6)
-tests/                   15 tests; conftest.py forces the stub, no tracing, runs to a temp folder
-findings/                results written up, and the evidence behind them (committed)
-CLAUDE.md                rules for Claude Code working in this repo
-HANDOFF.md · MIGRATION.md   how v2 was handed over and brought into this repo
-```
-
----
-
-## 5 · The data: the 80%
+## 7 · The data: the 80%
 
 Each block of the prompt comes from a different source system; the orchestrator fetches from each and assembles.
 
@@ -181,7 +380,7 @@ task is part of B7, verbatim. T7 also gets an OUTPUT FORMAT block after B7 (a ru
 
 ---
 
-## 6 · Commands
+## 8 · Commands
 
 | Command | What it does | Model calls |
 |---|---|---|
@@ -211,7 +410,7 @@ the machine. `run_conditions.py --only T0` rewrites `human_review.csv` with only
 
 ---
 
-## 7 · Models and evaluation
+## 9 · Models and evaluation
 
 ### Three model roles — keep them separate
 
@@ -264,12 +463,12 @@ never flagged notes (`known_to_her()`). The DeepEval judge is told the same.
 
 ---
 
-## 8 · Configuration (`.env`)
+## 10 · Configuration (`.env`)
 
 | Variable | Purpose |
 |---|---|
 | `ANTHROPIC_API_KEY` | empty → the replay stub |
-| `MODEL_WRITER`, `MODEL_WRITER_2`, `MODEL_READER` | §7 |
+| `MODEL_WRITER`, `MODEL_WRITER_2`, `MODEL_READER` | §9 |
 | `STUB_MODEL=1` | force the stub even with a key |
 | `SEND_APPROVAL_REQUIRED` | `true` → a T7 survivor pauses for approval |
 | `LANGSMITH_API_KEY`, `LANGSMITH_TRACING`, `LANGSMITH_PROJECT` | tracing |
@@ -280,7 +479,7 @@ never flagged notes (`known_to_her()`). The DeepEval judge is told the same.
 
 ---
 
-## 9 · Where outputs go
+## 11 · Where outputs go
 
 | Path | Written by | Contents |
 |---|---|---|
@@ -295,13 +494,13 @@ never flagged notes (`known_to_her()`). The DeepEval judge is told the same.
 
 ---
 
-## 10 · How to change things
+## 12 · How to change things
 
 After any change: `make test`. Then one real run to see it: `python scripts/run_one.py sunidhi T0`.
 
 - **A condition's blocks** — edit its entry in `data/experiment/conditions.json`. Never hard-code a condition.
 - **The T0–T5 task sentence** — `task_single_line` in the same file; it changes all single-line conditions at once.
-- **A block's content** — edit the source file (§5), not the block text. The golden-prompt test will then fail,
+- **A block's content** — edit the source file (§7), not the block text. The golden-prompt test will then fail,
   because the block no longer equals the experiment's: expected when the change is deliberate — update
   `blocks_verbatim.json` (or the test) to the new baseline in the same commit, and say so.
 - **How a block is laid out** — `blocks.build`; same golden-test rule.
@@ -315,7 +514,7 @@ After any change: `make test`. Then one real run to see it: `python scripts/run_
 
 ---
 
-## 11 · Tests
+## 13 · Tests
 
 `tests/conftest.py` forces the replay stub, turns tracing off, blanks the LangSmith key and sends runs to a temporary
 folder — `make test` never calls a model, never touches the network and never writes into `data/runs`.
@@ -329,7 +528,7 @@ folder — `make test` never calls a model, never touches the network and never 
 
 ---
 
-## 12 · Rules that must survive any change
+## 14 · Rules that must survive any change
 
 - **Conditions are data** (`conditions.json`). **T7 = B0 + B1 + B2 + B3 + B7** — B4 replaced, B5 absent.
 - **No truncation, no token budget** in `assemble`. The experiment had none.
@@ -343,7 +542,7 @@ folder — `make test` never calls a model, never touches the network and never 
 
 ---
 
-## 13 · Debugging
+## 15 · Debugging
 
 | Symptom | Look at |
 |---|---|
@@ -362,7 +561,7 @@ folder — `make test` never calls a model, never touches the network and never 
 
 ---
 
-## 14 · Decisions and known gaps
+## 16 · Decisions and known gaps
 
 **Decisions, 26 Sep (Suchit)** — also in `findings/2026-09-26_t_series_api.md`:
 1. Human verdict = the proxy verdict for the first Fable series (T7 intelligence 1/3).
@@ -379,7 +578,7 @@ folder — `make test` never calls a model, never touches the network and never 
 
 ---
 
-## 15 · History
+## 17 · History
 
 | Ref | What |
 |---|---|
