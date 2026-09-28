@@ -80,11 +80,17 @@ def print_table(res: dict) -> None:
 
 
 def save_table(res: dict) -> None:
-    """data/runs/conditions_latest.json and human_review.csv — the human verdict column is the final call."""
+    """data/runs/conditions_latest.json and human_review.csv — the human verdict column is the final call, so a
+    verdict already given is carried over for any line that is unchanged (same condition, writer, run and text)."""
     import csv
     config.RUNS.mkdir(parents=True, exist_ok=True)
     json.dump(res, open(config.RUNS / "conditions_latest.json", "w"), indent=2)
-    with open(config.RUNS / "human_review.csv", "w", newline="") as f:
+    sheet, kept = config.RUNS / "human_review.csv", {}
+    if sheet.exists():
+        for row in csv.DictReader(open(sheet, encoding="utf-8")):
+            kept[(row["condition"], row["writer"], row["run"], row["line"])] = (row["HUMAN_VERDICT (automation/intelligence)"], row["HUMAN_NOTE"])
+    with open(sheet, "w", newline="", encoding="utf-8") as f:
         wr = csv.writer(f); wr.writerow(["condition", "writer", "run", "line", "proxy_verdict", "HUMAN_VERDICT (automation/intelligence)", "HUMAN_NOTE"])
         for r in res["rows"]:
-            for i, (l, v) in enumerate(zip(r["lines"], r["verdicts"])): wr.writerow([r["condition"], r["writer"], i + 1, l, v, "", ""])
+            for i, (l, v) in enumerate(zip(r["lines"], r["verdicts"])):
+                wr.writerow([r["condition"], r["writer"], i + 1, l, v, *kept.get((r["condition"], r["writer"], str(i + 1), l or ""), ("", ""))])
